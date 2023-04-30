@@ -1,0 +1,10 @@
+opencv-python
+numpy
+boto3
+fastapi
+mangum
+jinja2
+uvicorn
+pymysql
+keras
+tensorflow

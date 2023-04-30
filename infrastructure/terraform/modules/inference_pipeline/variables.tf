@@ -1,4 +1,3 @@
-# General
 variable "region" {
   default = ""
 }
@@ -11,7 +10,6 @@ variable "os" {
   default = ""
 }
 
-# Inference Pipeline
 variable "ecr_repository_name_inference_pipeline" {
   default = ""
 }
