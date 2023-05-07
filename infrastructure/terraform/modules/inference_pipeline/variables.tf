@@ -21,3 +21,15 @@ variable "iam_role_lambda_name_inference_pipeline" {
 variable "lambda_function_name_inference_pipeline" {
   default = ""
 }
+
+variable "s3_function_name_inference_pipeline" {
+  default = ""
+}
+
+variable "iam_role_s3_name_inference_pipeline" {
+  default = ""
+}
+
+variable "local_path" {
+    default = ""
+}

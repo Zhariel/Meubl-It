@@ -8,4 +8,5 @@ module "inference_pipeline" {
   ecr_repository_name_inference_pipeline = var.ecr_repository_name_inference_pipeline
   iam_role_lambda_name_inference_pipeline = var.iam_role_lambda_name_inference_pipeline
   lambda_function_name_inference_pipeline = var.lambda_function_name_inference_pipeline
+  s3_function_name_inference_pipeline = var.s3_function_name_inference_pipeline
 }

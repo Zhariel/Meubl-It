@@ -4,7 +4,6 @@ resource "aws_iam_role" "iam_role_lambda_inference_pipeline" {
   name = var.iam_role_lambda_name_inference_pipeline
   assume_role_policy = data.aws_iam_policy_document.iam_policy_lambda.json
 }
-
 resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment_lambda_vpc_access_execution" {
   role       = aws_iam_role.iam_role_lambda_inference_pipeline.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"

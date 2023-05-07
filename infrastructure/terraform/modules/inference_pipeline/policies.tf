@@ -12,6 +12,19 @@ data "aws_iam_policy_document" "iam_policy_lambda" {
     }
   }
 }
+data "aws_iam_policy_document" "iam_policy_s3" {
+  version = "2012-10-17"
+
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole", "s3:*", "s3-object-lambda:*"]
+    principals {
+      type        = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+  }
+}
 
 resource "aws_iam_policy" "process_logging_policy" {
   name   = "function-logging-policy"
