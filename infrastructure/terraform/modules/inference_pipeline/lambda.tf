@@ -4,9 +4,15 @@ resource "aws_iam_role" "iam_role_lambda_inference_pipeline" {
   name = var.iam_role_lambda_name_inference_pipeline
   assume_role_policy = data.aws_iam_policy_document.iam_policy_lambda.json
 }
+
 resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment_lambda_vpc_access_execution" {
   role       = aws_iam_role.iam_role_lambda_inference_pipeline.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  role       = aws_iam_role.iam_role_lambda_inference_pipeline.name
 }
 
 resource "aws_lambda_function" "lambda_function_inference_pipeline" {
@@ -21,6 +27,13 @@ resource "aws_lambda_function" "lambda_function_inference_pipeline" {
     security_group_ids = [aws_security_group.sg_lambda_inference_pipeline.id]
     subnet_ids         = [aws_subnet.private_subnet.id]
   }
+#  environment {
+#    variables = {
+#      ENDPOINT_URL = aws_vpc_endpoint.s3.dns_entry[0]["dns_name"]
+#      ENDPOINT_ID = aws_vpc_endpoint.s3.id
+#      REGION = var.region
+#    }
+#  }
 }
 
 resource "aws_lambda_permission" "lambda_perm_api_gw_inference_pipeline" {

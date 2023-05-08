@@ -1,5 +1,3 @@
-
-
 module "inference_pipeline" {
   source = "./modules/inference_pipeline"
   region = var.region

@@ -12,6 +12,17 @@ data "aws_availability_zones" "availability_zones" {
   state = "available"
 }
 
+
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_endpoint_type   = "Interface"
+  vpc_id              = aws_vpc.my_vpc.id
+  service_name        = "com.amazonaws.${var.region}.s3"
+  security_group_ids  = [aws_security_group.sg_lambda_inference_pipeline.id]
+  subnet_ids          = [aws_subnet.private_subnet.id]
+}
+
+
 #resource "aws_subnet" "public" {
 #  count = 2
 #  vpc_id = aws_vpc.my_vpc.id
