@@ -1,7 +1,7 @@
 ################ Security Group ################
 
 resource "aws_security_group" "sg_lambda_inference_pipeline" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = aws_vpc.vpc_inference_pipeline.id
 
   ingress {
     protocol  = -1
@@ -11,23 +11,23 @@ resource "aws_security_group" "sg_lambda_inference_pipeline" {
   }
 
   ingress {
-    from_port = 0
-    protocol  = "tcp"
-    to_port   = 65535
+    from_port   = 0
+    protocol    = "tcp"
+    to_port     = 65535
     cidr_blocks = []
   }
 
   ingress {
-    from_port = 80
-    protocol  = "tcp"
-    to_port   = 80
+    from_port   = 80
+    protocol    = "tcp"
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port = 0
-    protocol  = "tcp"
-    to_port   = 65535
+    from_port   = 0
+    protocol    = "tcp"
+    to_port     = 65535
     cidr_blocks = ["0.0.0.0/0"]
   }
 
