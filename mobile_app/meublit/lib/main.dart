@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -31,7 +34,42 @@ class ImagePickerTutorial extends StatefulWidget {
 
 class _ImagePickerTutorialState extends State<ImagePickerTutorial> {
   File? pickedImage;
+  Uint8List? responseImage;
   bool isPicked = false;
+  bool isResponse = false;
+  String imageUrl = '';
+
+  Future<void> _uploadImage(File image) async {
+    List<int> imageBytes = await image.readAsBytes();
+    String base64Image = base64Encode(imageBytes);
+
+    var headers = {'Content-Type': 'application/json'};
+    var request = http.Request(
+        'POST',
+        Uri.parse(
+            'https://3b2l3tcj9j.execute-api.us-east-1.amazonaws.com/dev/api_inference_pipeline'));
+    request.body = json.encode({"encoded_img": base64Image});
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String responseBody = await response.stream.bytesToString();
+      Map<String, dynamic> responseJson = jsonDecode(responseBody);
+      String base64Image = responseJson['body'];
+      print(base64Image);
+      Uint8List imageBytes = base64Decode(base64Image);
+      print(imageBytes);
+      setState(() {
+        responseImage = imageBytes;
+        isPicked = true;
+        isResponse = true;
+      });
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,11 +83,17 @@ class _ImagePickerTutorialState extends State<ImagePickerTutorial> {
             Expanded(
               child: Container(
                 child: isPicked
-                    ? Image.file(
-                        pickedImage!,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.width * (4 / 3),
-                      )
+                    ? isResponse
+                        ? Image.memory(
+                            responseImage!,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width * (4 / 3),
+                          )
+                        : Image.file(
+                            pickedImage!,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width * (4 / 3),
+                          )
                     : Container(
                         color: Colors.blueGrey[100],
                         width: MediaQuery.of(context).size.width,
@@ -80,7 +124,9 @@ class _ImagePickerTutorialState extends State<ImagePickerTutorial> {
                 padding: const EdgeInsets.all(48.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Generate picture
+                    if (pickedImage != null) {
+                      _uploadImage(pickedImage!);
+                    }
                   },
                   child: const Text("Generate"),
                 ),
