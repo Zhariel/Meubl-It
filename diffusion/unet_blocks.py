@@ -36,13 +36,13 @@ class XConv(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, in_channels, out_channels, k_size=3):
         super().__init__()
-        self.maxpool_conv = nn.Sequential(
+        self.conv = nn.Sequential(
             nn.MaxPool2d(2),
             XConv(in_channels, out_channels, k_size=k_size)
         )
 
     def forward(self, x):
-        return self.maxpool_conv(x)
+        return self.conv(x)
 
 
 class Decoder(nn.Module):
