@@ -8,6 +8,7 @@ import os
 MODEL_PATH = os.path.join('assets', 'sample_model.pkl')
 IMAGE_PATH = os.path.join('assets', 'image.jpg')
 
+
 class Sample(nn.Module):
     def __init__(self):
         super().__init__()
@@ -22,6 +23,7 @@ class Sample(nn.Module):
         x = self.output(x)
         x = self.sigmoid(x)
         return x
+
 
 model = Sample()
 
@@ -39,7 +41,7 @@ loaded_model = Sample()
 loaded_model.load_state_dict(torch.load(MODEL_PATH))
 loaded_model.eval()
 
-output_tensor = model(input_tensor)
+output_tensor = loaded_model(input_tensor)
 output_tensor = output_tensor.squeeze(0)
 output_tensor = output_tensor.permute(1, 2, 0)
 output_tensor = output_tensor.detach().cpu().numpy()
