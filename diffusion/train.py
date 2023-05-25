@@ -2,6 +2,8 @@ import numpy as np
 import os
 from torchvision import transforms
 from PIL import Image
+from diffusion.dataset import custom_dataset
+from torch.utils.data import DataLoader
 
 from diffusion.model.unet import UNet
 from diffusion.model_original.unet import SimpleUnet
@@ -37,12 +39,28 @@ input_tensor = preprocess(input_image).unsqueeze(0)
 # model = UNet()
 model = SimpleUnet()
 
+data = custom_dataset()
+dataloader = DataLoader(data, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
+
 model.to(device)
 optimizer = Adam(model.parameters(), lr=0.001)
 epochs = 100
 
-t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
-loss = get_loss(model, input_tensor, t, device)
+# t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
+# loss = get_loss(model, input_tensor, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device)
+
+for epoch in range(epochs):
+    for step, batch in enumerate(dataloader):
+      optimizer.zero_grad()
+
+      t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
+      loss = get_loss(model, batch[0], t)
+      loss.backward()
+      optimizer.step()
+
+      if epoch % 5 == 0 and step == 0:
+        print(f"Epoch {epoch} | step {step:03d} Loss: {loss.item()} ")
+        # sample_plot_image()
 
 # img = sample_timestep(input_tensor, t, model, betas, sqrt_one_minus_alphas_cumprod, sqrt_recip_alphas,
 #                       posterior_variance)
