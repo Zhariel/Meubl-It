@@ -178,7 +178,9 @@ class _ImageSelectorState extends State<ImageSelector> {
         ),
         Center(
           child: FurnitureSelector(
-            callback: (dropdownValue) => setState(() => selectedFurniture = dropdownValue),
+            callback: (dropdownValue) => setState(
+                    () => selectedFurniture = dropdownValue
+            ),
           ),
         ),
         const SizedBox(
@@ -189,7 +191,14 @@ class _ImageSelectorState extends State<ImageSelector> {
             if (pickedImage != null) {
               await _cropImage(pickedImage!);
               _requestAPI.requestGenerateFurnitureAPIService(
-                  updateFromAPI, pickedImage!, croppedImage!, selectedFurniture!);
+                  updateFromAPI,
+                  pickedImage!,
+                  selectedFurniture!,
+                  startPoint.dx,
+                  startPoint.dy,
+                  endPoint.dx,
+                  endPoint.dy
+              );
             }
           },
           child: const Text("Générer le meuble"),

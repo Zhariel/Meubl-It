@@ -8,20 +8,25 @@ class RequestAPI {
   Future<void> requestGenerateFurnitureAPIService(
       Function(Uint8List?) callback,
       File pickedImage,
-      Uint8List croppedImage,
-      String selectedFurniture) async {
+      String selectedFurniture,
+      double startXAxis,
+      double startYAxis,
+      double endXAxis,
+      double endYAxis) async {
     Uint8List pickedImageBytes = await pickedImage.readAsBytes();
     String base64PickedImage = base64Encode(pickedImageBytes);
-    String base64CroppedImage = base64Encode(croppedImage);
 
     var headers = {'Content-Type': 'application/json'};
     var request = http.Request('POST', Uri.parse(
-            'https://3b2l3tcj9j.execute-api.us-east-1.amazonaws.com/dev/api_inference_pipeline'
+            'https://fijr8ps8kk.execute-api.us-east-1.amazonaws.com/api_meubl_it/inference_pipeline'
     ));
     request.body = json.encode({
       "encoded_img": base64PickedImage,
-      "encoded_cropped_img": base64CroppedImage,
-      "selected_furniture": selectedFurniture
+      "selected_furniture": selectedFurniture,
+      "start-x-axis": startXAxis,
+      "start-y-axis": startYAxis,
+      "end-x-axis": endXAxis,
+      "end-y-axis": endYAxis
     });
     request.headers.addAll(headers);
 
