@@ -1,5 +1,6 @@
-import numpy as np
 import os
+
+import torchvision.datasets
 from torchvision import transforms
 from PIL import Image
 from diffusion.dataset import custom_dataset
@@ -28,65 +29,37 @@ sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
 sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - alphas_cumprod)
 posterior_variance = betas * (1. - alphas_cumprod_prev) / (1. - alphas_cumprod)
 
-input_image = Image.open(IMAGE_PATH).convert('RGB')
-preprocess = transforms.Compose([
-    transforms.Resize((32, 32)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-])
-input_tensor = preprocess(input_image).unsqueeze(0)
-
 # model = UNet()
 model = SimpleUnet()
 
-data = custom_dataset()
-dataloader = DataLoader(data, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
+data = custom_dataset(IMG_SIZE=64)
+l = len(data)
+BATCH_SIZE = 128 if l > 128 else l
+dataloader = DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
 
 model.to(device)
 optimizer = Adam(model.parameters(), lr=0.001)
-epochs = 100
+epochs = 1
 
 # t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
 # loss = get_loss(model, input_tensor, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device)
+# d = torchvision.datasets.StanfordCars(root=".", download=False)
 
 for epoch in range(epochs):
     for step, batch in enumerate(dataloader):
-      optimizer.zero_grad()
+        optimizer.zero_grad()
+        image, annotations, box = batch
 
-      t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
-      loss = get_loss(model, batch[0], t)
-      loss.backward()
-      optimizer.step()
+        t = torch.randint(0, 1, (BATCH_SIZE,), device=device).long()
 
-      if epoch % 5 == 0 and step == 0:
-        print(f"Epoch {epoch} | step {step:03d} Loss: {loss.item()} ")
-        # sample_plot_image()
+        loss = get_loss(model, image, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, box, device)
+        print(loss)
+        loss.backward()
+        optimizer.step()
 
-# img = sample_timestep(input_tensor, t, model, betas, sqrt_one_minus_alphas_cumprod, sqrt_recip_alphas,
-#                       posterior_variance)
+        if epoch % 5 == 0 and step == 0:
+            print(f"Epoch {epoch} | step {step:03d} Loss: {loss.item()} ")
+            # sample_plot_image(IMG_SIZE, T, device, model, betas, sqrt_one_minus_alphas_cumprod, sqrt_recip_alphas, posterior_variance)
 
-# for epoch in range(epochs):
-#     for step, batch in enumerate(dataloader):
-#       optimizer.zero_grad()
-#
-#       t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
-#       loss = get_loss(model, batch[0], t)
-#       loss.backward()
-#       optimizer.step()
-#
-#       if epoch % 5 == 0 and step == 0:
-#         print(f"Epoch {epoch} | step {step:03d} Loss: {loss.item()} ")
-#         sample_plot_image()
-#
-# t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
-# output_tensor = model(input_tensor, t)
-# output_tensor = output_tensor.squeeze(0)
-# # output_tensor = output_tensor.permute(1, 2, 0)
-# output_tensor = output_tensor.detach().cpu().numpy()
-#
-# output_tensor = (output_tensor * 255).astype(np.uint8)
-#
-# output_image = Image.fromarray(output_tensor)
-# output_image.save(IMAGE_PATH)
-#
-# output_image.show()
+
+

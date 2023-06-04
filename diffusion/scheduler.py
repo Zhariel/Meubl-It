@@ -1,9 +1,26 @@
 import torch
 import torch.nn.functional as F
+from torchvision import transforms
+import numpy as np
 
 
 def linear_beta_schedule(timesteps, start=0.0001, end=0.02):
     return torch.linspace(start, end, timesteps)
+
+
+def a(tensor):
+    tensor = tensor.squeeze()
+
+    # Normalize the tensor values to the range [0, 1]
+    # tensor = tensor.clamp(0, 1)
+    transform = transforms.ToPILImage()
+    image = transform(tensor)
+
+    if image.mode != 'RGB':
+        image = image.convert('RGB')
+
+    # Display the image
+    image.show()
 
 
 def get_index_from_list(vals, t, x_shape):
@@ -16,7 +33,20 @@ def get_index_from_list(vals, t, x_shape):
     return out.reshape(batch_size, *((1,) * (len(x_shape) - 1))).to(t.device)
 
 
-def forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device="cpu"):
+def mask_image_tensor(t1, t2, x1, y1, x2, y2):
+    # Merges the boxed in t2 defined by the coordinates onto t1
+    # Therefore t1 should be the original image and t2 the transformed image
+    # Tensor(1, 3, X, X)
+    mask = torch.zeros_like(t1)
+
+    mask[:, :, y1 - 1:y2, x1 - 1:x2] = 1
+    masked_t2 = t2 * mask
+    t1[:, :, y1 - 1:y2, x1 - 1:x2] = 0
+
+    return t1 + masked_t2
+
+
+def forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, xy1, xy2, device="cpu"):
     """
     Takes an image and a timestep as input and
     returns the noisy version of it
@@ -26,9 +56,16 @@ def forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_
     sqrt_one_minus_alphas_cumprod_t = get_index_from_list(
         sqrt_one_minus_alphas_cumprod, t, x_0.shape
     )
-    # mean + variance
-    return sqrt_alphas_cumprod_t.to(device) * x_0.to(device) \
-           + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device), noise.to(device)
+
+    noisy_image = sqrt_alphas_cumprod_t.to(device) * x_0.to(device) \
+                  + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device)
+
+    masked_noisy_image = mask_image_tensor(x_0, noisy_image, *xy1, *xy2)
+    masked_noise = mask_image_tensor(torch.zeros_like(x_0), noise, *xy1, *xy2)
+    a(masked_noisy_image)
+    a(masked_noise)
+
+    return masked_noisy_image.to(device), masked_noise.to(device)
 
 
 @torch.no_grad()
@@ -56,28 +93,11 @@ def sample_timestep(x, t, model, betas, sqrt_one_minus_alphas_cumprod, sqrt_reci
         noise = torch.randn_like(x)
         return model_mean + torch.sqrt(posterior_variance_t) * noise
 
-def get_loss(model, x_0, t,sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device):
-    x_noisy, noise = forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device)
+
+def get_loss(model, x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, box, device):
+    x_noisy, noise = forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod,
+                                              (box[0], box[1]), (box[2], box[3]), device)
+    # x_noisy, noise = forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device)
     noise_pred = model(x_noisy, t)
     return F.l1_loss(noise, noise_pred)
-
-# @torch.no_grad()
-# def sample_plot_image(IMG_SIZE, device, plt):
-#     # Sample noise
-#     img_size = IMG_SIZE
-#     img = torch.randn((1, 3, img_size, img_size), device=device)
-#     plt.figure(figsize=(15, 15))
-#     plt.axis('off')
-#     num_images = 10
-#     stepsize = int(T / num_images)
-#
-#     for i in range(0, T)[::-1]:
-#         t = torch.full((1,), i, device=device, dtype=torch.long)
-#         img = sample_timestep(img, t)
-#         # Edit: This is to maintain the natural range of the distribution
-#         img = torch.clamp(img, -1.0, 1.0)
-#         if i % stepsize == 0:
-#             plt.subplot(1, num_images, int(i / stepsize) + 1)
-#             show_tensor_image(img.detach().cpu())
-#     plt.show()
 
