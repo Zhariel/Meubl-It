@@ -3,8 +3,9 @@ numpy
 boto3
 fastapi
 mangum
+requests
 jinja2
 uvicorn
 pymysql
-keras
-tensorflow
+torch
+torchvision

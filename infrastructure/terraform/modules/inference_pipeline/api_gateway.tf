@@ -1,8 +1,8 @@
 ################ API Gateway ################
 
 resource "aws_api_gateway_rest_api" "api_gw_inference_pipeline" {
-  name = "my_api"
-  description = "Gateway API Meubl'It"
+  name        = var.api_name_inference_pipeline
+  description = "API Gateway Meubl'It"
 
   binary_media_types = [
     "*/*"
@@ -15,7 +15,7 @@ resource "aws_api_gateway_resource" "resource_api_gw_inference_pipeline" {
   ]
   rest_api_id = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
   parent_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.root_resource_id
-  path_part   = "api_inference_pipeline"
+  path_part   = "inference_pipeline"
 }
 
 resource "aws_api_gateway_method" "method_api_gw_inference_pipeline" {
@@ -32,10 +32,10 @@ resource "aws_api_gateway_method_response" "method_response_api_gw_inference_pip
   depends_on = [
     aws_api_gateway_method.method_api_gw_inference_pipeline
   ]
-  rest_api_id = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-  resource_id = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-  http_method = aws_api_gateway_method.method_api_gw_inference_pipeline.http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
+  resource_id     = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
+  http_method     = aws_api_gateway_method.method_api_gw_inference_pipeline.http_method
+  status_code     = "200"
   response_models = {
     "application/json" = "Empty"
   }
@@ -73,12 +73,12 @@ resource "aws_api_gateway_integration" "integration_api_gw_inference_pipeline" {
   depends_on = [
     aws_api_gateway_method.method_api_gw_inference_pipeline
   ]
-  rest_api_id = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-  resource_id = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-  http_method = aws_api_gateway_method.method_api_gw_inference_pipeline.http_method
-  type        = "AWS_PROXY"
+  rest_api_id             = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
+  resource_id             = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
+  http_method             = aws_api_gateway_method.method_api_gw_inference_pipeline.http_method
+  type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri = aws_lambda_function.lambda_function_inference_pipeline.invoke_arn
+  uri                     = aws_lambda_function.lambda_function_inference_pipeline.invoke_arn
 }
 
 resource "aws_api_gateway_integration_response" "integration_response_api_gw_inference_pipeline" {
@@ -127,11 +127,11 @@ resource "aws_api_gateway_deployment" "deployment_api_gw_inference_pipeline" {
   rest_api_id = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
 }
 
-resource "aws_api_gateway_stage" "api_meubl_it" {
+resource "aws_api_gateway_stage" "stage_api_gw_inference_pipeline" {
   depends_on = [
     aws_api_gateway_deployment.deployment_api_gw_inference_pipeline
   ]
   deployment_id = aws_api_gateway_deployment.deployment_api_gw_inference_pipeline.id
   rest_api_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-  stage_name    = "dev"
+  stage_name    = var.api_name_inference_pipeline
 }
