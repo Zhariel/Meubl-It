@@ -90,6 +90,19 @@ async def main(payload: dict = Body(...)):
     model = load_model_from_s3(bucket_name, model_key)
 
     encoded_img = payload["encoded_img"]
+    selected_furniture = payload["selected_furniture"]
+    start_x_axis = payload["start-x-axis"]
+    end_x_axis = payload["end-x-axis"]
+    start_y_axis = payload["start-y-axis"]
+    end_y_axis = payload["end-y-axis"]
+    LOGGER.info("Selected furniture: " + selected_furniture)
+    LOGGER.info("start_x_axis: " + str(start_x_axis))
+    LOGGER.info("end_x_axis: " + str(end_x_axis))
+    LOGGER.info("start_y_axis: " + str(start_y_axis))
+    LOGGER.info("end_y_axis: " + str(end_y_axis))
+
+    LOGGER.info("Save encoded image in /unannotated S3 bucket")
+    s3.Object(bucket_name, 'unannotated/' + str(np.random.randint(100000)) + '.png').put(Body=base64.b64decode(encoded_img))
 
     LOGGER.info("Decode the image from base64")
     decoded_image = base64.b64decode(encoded_img)
@@ -117,6 +130,5 @@ async def main(payload: dict = Body(...)):
 async def root(request: Request):
     json = await request.json()
     LOGGER.info(json)
-
 
 handler = Mangum(app)

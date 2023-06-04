@@ -28,6 +28,10 @@ variable "bucket_name_inference_pipeline" {
   default = ""
 }
 
+variable "bucket_name_inference_pipeline_data" {
+  default = ""
+}
+
 variable "api_name_inference_pipeline" {
   default = ""
 }

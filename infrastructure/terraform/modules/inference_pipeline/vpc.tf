@@ -45,4 +45,3 @@ resource "aws_vpc_endpoint" "vpc_endpoint_s3_inference_pipeline" {
   service_name    = "com.amazonaws.${var.region}.s3"
   route_table_ids = [aws_route_table.private_route_table_inference_pipeline.id]
 }
-
