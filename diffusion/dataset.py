@@ -8,7 +8,8 @@ import torch
 from PIL import Image
 
 
-def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('assets', 'test3.png'), 0)]):
+# def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('assets', 'test3.png'), 0)]):
+def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('assets', 'sample.png'), 0)]):
     data_transforms = [
         transforms.Resize((IMG_SIZE, IMG_SIZE)),
         transforms.RandomHorizontalFlip(),
@@ -28,7 +29,8 @@ def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('asse
         def __getitem__(self, index):
             image_path, annotation = self.image_paths[index]
 
-            samplebox = (50, 50, 250, 250)  # Temporary
+            # samplebox = (50, 50, 250, 250)  # Temporary
+            samplebox = (0, 285, 440, 725) # Temporary
             image = Image.open(image_path).convert('RGB')
             coord, newbox = self.crop_largest_square_around_point(*image.size, samplebox, IMG_SIZE)
             image = image.crop(coord)
@@ -65,13 +67,7 @@ def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('asse
 
             return (left, top, right, bottom), (nleft, ntop, nright, nbottom)
 
-        def contains_ext(self, string):
-            if '.' in string:
-                return True
-            return False
-
         def gather_links(self):
-            extension = ['.jpg', '_seg.png']
             links = []
             dirs = os.listdir(self.dataset_directory)
 
@@ -80,7 +76,7 @@ def custom_dataset(IMG_SIZE=64, train_split=80, image_paths=[(os.path.join('asse
 
                 items = os.listdir(subdirs_folder)
                 for i in items:
-                    if not self.contains_ext(i):
+                    if not '.' in i:
                         links.append((i + '.json', i + '.jpg'))
 
             return links
