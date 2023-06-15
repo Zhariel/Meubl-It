@@ -30,8 +30,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-test*
-sample*
+test.py
+sample.py
 *.pkl
 # PyInstaller
 #  Usually these files are written by a python script from a template
