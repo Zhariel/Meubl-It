@@ -34,28 +34,33 @@ class ImageDataset(Dataset):
         return input_image, target_image
 
 
-# @jit
+@jit
 def prepare_training_sample(img, steps, labels, x1, y1, x2, y2):
-    lis = []
+    img_pairs = []
+    mask_labels = []
     mask = np.zeros_like(img)
     mask[y1:y2 + 1, x1:x2 + 1, :] = 1
+    noise = np.random.uniform(-1, 1, img.shape) / steps
 
     for i in range(steps - 1, -1, -1):
         clone = np.copy(img)
-        noise_mask = np.random.uniform(-1, 1, img.shape) * mask
+        noise_mask = noise * i * mask
         clone[y1:y2, x1:x2, :] = 0
-        x_flat = np.reshape(clone + noise_mask, (-1))
-        flat_mask = np.reshape(mask[:, :, 0], (-1))
-        lis.append((clone + noise_mask, mask[:, :, 0:1], labels))
-        # lis.append((np.concatenate((x_flat, flat_mask, labels)), img))
-        break
-    return lis
+        img_pairs.append((
+            torch.from_numpy(clone + noise_mask), 
+            torch.from_numpy(img)))
+        mask_labels.append((
+            torch.from_numpy(mask[:, :, 0:1]), 
+            torch.from_numpy(labels, dtype=torch.float32)))
+            
+    return img_pairs, mask_labels
 
 
-# @jit
+@jit
 def one_hot_labels(label_list, selected):
     return np.array([1 if selected == elt else 0 for elt in label_list])
 
+################## Examples
 
 box_examples = [
     [2, 2, 4, 4],
@@ -78,25 +83,13 @@ sample = Image.open(os.path.join('assets', 'sample.png')).resize((res, res))
 arr = np.array(sample)
 sample_labels = one_hot_labels(x_labels, np.random.choice(x_labels))
 
-# x = [None] * len(box_examples)
-# for i, b in enumerate(box_examples):
-#     label = one_hot_labels(x_labels, np.random.choice(x_labels))
-#     x[i] = prepare_training_sample(arr, T, label, *b)
+##################
 
-x = []
+x_pairs = []
 for b in box_examples:
     label = one_hot_labels(x_labels, np.random.choice(x_labels))
-    x.append(*prepare_training_sample(arr, T, label, *b))
+    x_pairs.append(*prepare_training_sample(arr, T, label, *b))
 
-im = torch.from_numpy(x[0][0])
-mask = torch.from_numpy(x[0][1])
-label = torch.tensor(x[0][2], dtype=torch.float32)
-
-
-lbltensor = torch.randn(64)
-lbltensor = lbltensor.view(8, 8, 1)
-concatenated_tensor = torch.cat((im, mask, lbltensor), dim=2)
-
-print(concatenated_tensor.shape)
+dataset = ImageDataset(x_pairs)
 
 model = SimpleUnet(label.shape[0], res)
