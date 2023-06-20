@@ -24,6 +24,7 @@ variable "lambda_function_name_inference_pipeline" {
   default = ""
 }
 
+
 variable "bucket_name_inference_pipeline" {
   default = ""
 }
@@ -61,5 +62,10 @@ variable "bucket_key_model_inference_pipeline" {
 }
 
 variable "model_path_inference_pipeline" {
+  default = ""
+}
+
+# retrain pipeline
+variable "lambda_function_name_retrain_pipeline" {
   default = ""
 }

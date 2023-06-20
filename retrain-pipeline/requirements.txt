@@ -1,0 +1,7 @@
+opencv-python
+numpy
+boto3
+requests
+jinja2
+torch
+torchvision
