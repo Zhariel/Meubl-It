@@ -33,5 +33,7 @@ module "retrain_pipeline" {
   bucket_key_model_inference_pipeline            = var.bucket_key_model_inference_pipeline
   sg_lambda_retrain_pipeline_id = module.inference_pipeline.sg_lambda_inference_pipeline_id
   private_subnet_retrain_pipeline_id = module.inference_pipeline.private_subnet_inference_pipeline_id
-  s3_object_annotated_inference_pipeline_key = module.inference_pipeline.s3_object_annotated_inference_pipeline_key
+  s3_object_annotated_retrain_pipeline_key = module.inference_pipeline.s3_object_annotated_inference_pipeline_key
+  s3_object_trained_retrain_pipeline_key = module.inference_pipeline.s3_object_trained_inference_pipeline_key
+
 }

@@ -29,3 +29,9 @@ resource "aws_s3_object" "s3_object_unannotated" {
   key    = "unannotated/"
   acl    = "private"
 }
+resource "aws_s3_object" "s3_object_trained" {
+  bucket = aws_s3_bucket.s3_bucket_inference_pipeline_data.id
+  force_destroy = true
+  key    = "trained/"
+  acl    = "private"
+}

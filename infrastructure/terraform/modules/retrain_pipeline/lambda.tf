@@ -21,6 +21,7 @@ resource "aws_lambda_function" "lambda_function_retrain_pipeline" {
       BUCKET_NAME = var.bucket_name_retrain_pipeline
       MODEL_KEY   = var.bucket_key_model_retrain_pipeline
       ANNOTATED_DATA_FOLDER_KEY   = var.s3_object_annotated_retrain_key
+      TRAINED_DATA_FOLDER_KEY   = var.s3_object_trained_retrain_key
     }
   }
 }
@@ -42,4 +43,3 @@ resource "aws_s3_bucket_notification" "bucket_terraform_notification" {
   }
   depends_on = [aws_lambda_permission.lambda_perm_api_gw_retrain_pipeline]
 }
-

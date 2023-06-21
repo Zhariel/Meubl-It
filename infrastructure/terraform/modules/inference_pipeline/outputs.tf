@@ -7,3 +7,6 @@ output "private_subnet_inference_pipeline_id" {
 output "s3_object_annotated_inference_pipeline_key" {
   value = aws_s3_object.s3_object_annotated.key
 }
+output "s3_object_trained_inference_pipeline_key" {
+  value = aws_s3_object.s3_object_trained.key
+}

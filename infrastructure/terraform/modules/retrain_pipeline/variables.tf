@@ -55,3 +55,6 @@ variable "private_subnet_retrain_pipeline_id" {
 variable "s3_object_annotated_retrain_key" {
     default = ""
 }
+variable "s3_object_trained_retrain_key" {
+    default = ""
+}
