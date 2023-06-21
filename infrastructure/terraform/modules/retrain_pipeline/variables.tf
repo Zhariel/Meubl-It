@@ -46,13 +46,20 @@ variable "lambda_function_timeout_retrain_pipeline" {
 variable "bucket_key_model_retrain_pipeline" {
   default = ""
 }
+
 variable "sg_lambda_retrain_pipeline_id" {
   default = ""
 }
+
 variable "private_subnet_retrain_pipeline_id" {
     default = ""
 }
-variable "s3_object_annotated_retrain_key" {
+
+variable "s3_bucket_retrain_pipeline_id" {
+  default = ""
+}
+
+variable "s3_object_annotated_retrain_pipeline_key" {
     default = ""
 }
 variable "s3_object_trained_retrain_key" {

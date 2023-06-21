@@ -20,8 +20,8 @@ resource "aws_lambda_function" "lambda_function_retrain_pipeline" {
     variables = {
       BUCKET_NAME = var.bucket_name_retrain_pipeline
       MODEL_KEY   = var.bucket_key_model_retrain_pipeline
-      ANNOTATED_DATA_FOLDER_KEY   = var.s3_object_annotated_retrain_key
-      TRAINED_DATA_FOLDER_KEY   = var.s3_object_trained_retrain_key
+      ANNOTATED_DATA_FOLDER_KEY   = var.s3_object_annotated_retrain_pipeline_key
+      TRAINED_DATA_FOLDER_KEY   = aws_s3_object.s3_object_trained.key
     }
   }
 }
