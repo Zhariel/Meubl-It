@@ -34,6 +34,7 @@ def handler(event, context):
     LOGGER.info(f"Get list of images from {bucket_name}/{annotated_data_folder_key} S3 bucket")
     response = s3.list_objects(Bucket=bucket_name, Prefix=annotated_data_folder_key)
     images = [obj['Key'] for obj in response['Contents']]
+    images_data = [s3.get_object(Bucket=bucket_name, Key=obj['Key'])['Body'].read() for obj in response['Contents']]
 
     if len(images) < batch_size:
         LOGGER.info(f"Number of images in {bucket_name}/{annotated_data_folder_key} S3 bucket is less than batch size")
