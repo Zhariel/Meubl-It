@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import boto3
 import os
+import json
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -18,6 +19,14 @@ trained_data_folder_key = os.environ['TRAINED_DATA_FOLDER_KEY']
 batch_size = 3
 
 s3 = boto3.resource('s3')
+
+
+def load_from_s3(LOGGER, bucket_name, key_file):
+    s3 = boto3.client('s3')
+    LOGGER.info(f"Get {key_file} from {bucket_name} S3 bucket")
+    response = s3.get_object(Bucket=bucket_name, Key=key_file)
+    file_bytes = response['Body'].read()
+    return file_bytes
 
 
 def fake_retrain():
@@ -44,24 +53,32 @@ def handler(event, context):
 
     fake_retrain()
 
+    LOGGER.info("List images: " + str(images))
+
     box_array = []
     label_array = []
     images_array = []
-    # for box in images:
-    #     box_array.append(box)
-    # for label in images:
-    #     label_array.append(label)
-    # for image in images:
-    #     images_array.append(image)
-    for box, label, image in zip(images):
-        box_array.append(box)
-        label_array.append(label)
+
+    for i in range(0, len(images), 2):
+        img_file = load_from_s3(LOGGER, bucket_name, images[i])
+        image_stream = BytesIO(img_file)
+        image = Image.open(image_stream).convert('RGB')
+
+        metadata_file = load_from_s3(LOGGER, bucket_name, images[i + 1]).decode('utf-8')
+        metadata = json.loads(metadata_file)
+        box = (
+            int(metadata["start_x_axis"]),
+            int(metadata["end_x_axis"]),
+            int(metadata["start_y_axis"]),
+            int(metadata["end_y_axis"])
+        )
+
         images_array.append(image)
+        label_array.append(metadata["selected_furniture"])
+        box_array.append(box)
+
     LOGGER.info("Box array: " + str(box_array))
     LOGGER.info("Label array: " + str(label_array))
     LOGGER.info("Images array: " + str(images_array))
-
-
-    LOGGER.info("List images: " + str(images))
 
     return {"statusCode": 200, "body": "fake retrained"}
