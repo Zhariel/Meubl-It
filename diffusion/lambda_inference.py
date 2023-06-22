@@ -31,8 +31,8 @@ class Unet(nn.Module):
         down_channels = (32, 64, 128, 256, 512)
         up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
+        # self.T = T
         self.in_len = in_len
-
 
         self.linear = nn.Linear(labels_len, in_len ** 2)
 
@@ -53,12 +53,13 @@ class Unet(nn.Module):
         x = self.conv0(x)
         # Unet
         residual_inputs = []
-        for down in self.downs:
-            x = down(x)
-            residual_inputs.append(x)
-        for up in self.ups:
-            residual_x = residual_inputs.pop()
-            # Add residual x as additional channels
-            x = torch.cat((x, residual_x), dim=1)
-            x = up(x)
-        return self.output(x)
+        with torch.no_grad():
+            for down in self.downs:
+                x = down(x)
+                residual_inputs.append(x)
+            for up in self.ups:
+                residual_x = residual_inputs.pop()
+                # Add residual x as additional channels
+                x = torch.cat((x, residual_x), dim=1)
+                x = up(x)
+            return self.output(x)

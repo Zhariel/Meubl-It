@@ -1,95 +1,63 @@
 import os
 import numpy as np
 
-from diffusion.dataset import custom_dataset
-from torch.utils.data import DataLoader
-from diffusion.model.unet import SimpleUnet
+from diffusion.model.unet import Unet
+from dataset import ListDataset, gather_links, one_hot_labels, prepare_training_sample, load_images_and_labels
+from torchvision import transforms
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
+from tqdm import tqdm
 from PIL import Image
-from numba import jit, njit
-from torch.optim import Adam
+import random
 
-IMAGE_PATH = os.path.join('..', 'assets', 'image.jpg')
-IMG_SIZE = 64
-BATCH_SIZE = 128
-device = "cpu" if torch.cuda.is_available() else "cpu"
+res = 64
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+T = 3
 
-T = 10
-res = 8
+x_labels = ['chair', 'bookshelf', 'dresser', 'sofa', 'table']
 
+LABEL_SHAPE = len(x_labels)
+links = gather_links()
 
-class ImageDataset(Dataset):
-    def __init__(self, data):
-        self.data = data
+print("Extracting images")
+# images, box_coords, labels = test_load_images_and_labels([], x_labels, res)
+images, box_coords, labels = load_images_and_labels(links, x_labels, res)
+normalize = transforms.Lambda(lambda t: (t * 2) - 1)
 
-    def __len__(self):
-        return len(self.data)
+print("Preparing samples")
+x_list, y_list, mask_list, label_list = [], [], [], []
+for sample in tqdm(zip(images, box_coords, labels)):
+    image, box, labels = sample
+    label = one_hot_labels(labels, np.random.choice(labels))
+    prepare_training_sample(normalize(image), T, label, x_list, y_list, mask_list, label_list, *box)
 
-    def __getitem__(self, index):
-        input_image, target_image = self.data[index]
-        return input_image, target_image
+learning_rate = 0.001
+batch_size = 16
+num_epochs = 5
 
+print("Creating dataset")
+dataset = ListDataset(x_list, mask_list, label_list, y_list, device)
+dataset.shuffle()
+dataloader = DataLoader(dataset, batch_size=batch_size)
+model = Unet(LABEL_SHAPE, res).to(device)
 
-@jit
-def prepare_training_sample(img, steps, labels, x1, y1, x2, y2):
-    img_pairs = []
-    mask_labels = []
-    mask = np.zeros_like(img)
-    mask[y1:y2 + 1, x1:x2 + 1, :] = 1
-    noise = np.random.uniform(-1, 1, img.shape) / steps
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+criterion = nn.CrossEntropyLoss()
 
-    for i in range(steps - 1, -1, -1):
-        clone = np.copy(img)
-        noise_mask = noise * i * mask
-        clone[y1:y2, x1:x2, :] = 0
-        img_pairs.append((
-            torch.from_numpy(clone + noise_mask), 
-            torch.from_numpy(img)))
-        mask_labels.append((
-            torch.from_numpy(mask[:, :, 0:1]), 
-            torch.from_numpy(labels, dtype=torch.float32)))
-            
-    return img_pairs, mask_labels
+print("Starting training")
+for epoch in range(num_epochs):
+    for i, (x, m, l, target) in enumerate(dataloader):
+        outputs = model(x, m, l)
+        loss = criterion(outputs, target.permute(0, 3, 1, 2))
 
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-@jit
-def one_hot_labels(label_list, selected):
-    return np.array([1 if selected == elt else 0 for elt in label_list])
+        if i % 5 == 0:
+            print(f"Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(dataloader)}], Loss: {loss.item():.4f}")
 
-################## Examples
-
-box_examples = [
-    [2, 2, 4, 4],
-    [0, 0, 4, 4],
-    [1, 1, 3, 3],
-    [4, 4, 8, 8],
-    [4, 4, 6, 6],
-]
-
-x_labels = [
-    'chair',
-    'bookshelf',
-    'dresser',
-    'sofa',
-    'table',
-]
-
-sample = Image.open(os.path.join('assets', 'sample.png')).resize((res, res))
-
-arr = np.array(sample)
-sample_labels = one_hot_labels(x_labels, np.random.choice(x_labels))
-
-##################
-
-x_pairs = []
-for b in box_examples:
-    label = one_hot_labels(x_labels, np.random.choice(x_labels))
-    x_pairs.append(*prepare_training_sample(arr, T, label, *b))
-
-dataset = ImageDataset(x_pairs)
-
-model = SimpleUnet(label.shape[0], res)
+torch.save(model.state_dict(), os.path.join('model', 'model.pt'))

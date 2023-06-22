@@ -39,6 +39,9 @@ backup/sample.py
 *.manifest
 *.spec
 backup/
+*.pt
+*.pth
+*.h5
 
 # Installer logs
 pip-log.txt
