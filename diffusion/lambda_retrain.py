@@ -118,18 +118,17 @@ resize = transforms.Resize((resolution, resolution))
 
 from PIL import Image  # Remove this
 
-imges = [Image.open(os.path.join('assets', 'adesample', 'a.jpg'))] * BATCH_SIZE  #########################################
-boxes = [(50, 50, 250, 250)] * BATCH_SIZE  ###############################################################################
+imges = [Image.open(os.path.join('assets', 'adesample', 'a.jpg'))] * BATCH_SIZE  ######################################
+boxes = [(50, 50, 250, 250)] * BATCH_SIZE  ############################################################################
 coordinates = [crop_largest_square_around_point(*i.size, b, resolution) for i, b in zip(imges, boxes)]
-# coords, new_coords = crop_largest_square_around_point(*img.size, box, resolution)
+
 imges = [np.array(resize(i.crop(coords[0]))) for i, coords in zip(imges, coordinates)]
-# img = np.array(resize(img.crop(coords)))
 
 labels = ["chair"] * BATCH_SIZE
 labels = [[1 if l == elt else 0 for elt in x_labels] for l in labels]
 
-# x, y, m, l = prepare_training_sample(img, encoded_label, steps, *new_coords)
-samples = [prepare_training_sample(img, label, steps, *coords[1]) for img, label, coords in zip(imges, labels, coordinates)]
+samples = [prepare_training_sample(img, label, steps, *coords[1]) for img, label, coords in
+           zip(imges, labels, coordinates)]
 
 learning_rate = 0.001
 batch_size = 1
