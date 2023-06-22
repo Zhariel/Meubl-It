@@ -127,8 +127,8 @@ imges = [np.array(resize(i.crop(coords[0]))) for i, coords in zip(imges, coordin
 labels = ["chair"] * BATCH_SIZE
 labels = [[1 if l == elt else 0 for elt in x_labels] for l in labels]
 
-samples = [prepare_training_sample(img, label, steps, *coords[1]) for img, label, coords in
-           zip(imges, labels, coordinates)]
+normalize = transforms.Lambda(lambda t: (t * 2) - 1)
+samples = [prepare_training_sample(normalize(img), label, steps, *coords[1]) for img, label, coords in zip(imges, labels, coordinates)]
 
 learning_rate = 0.001
 batch_size = 1
