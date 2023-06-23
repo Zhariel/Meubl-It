@@ -12,56 +12,31 @@ variable "os" {
 }
 
 # Inference Pipeline
-variable "ecr_repository_name_inference_pipeline" {
+variable "s3_meubl_it_bucket_name" {
   default = ""
 }
 
-variable "iam_role_lambda_name_inference_pipeline" {
+variable "s3_meubl_it_bucket_id" {
   default = ""
 }
 
-variable "lambda_function_name_inference_pipeline" {
+variable "s3_object_meubl_it_model_key" {
   default = ""
 }
 
-
-variable "bucket_name_inference_pipeline" {
+variable "s3_object_annotated_data_key" {
   default = ""
 }
 
-variable "bucket_name_inference_pipeline_data" {
+variable "iam_policy_process_logging_policy_arn" {
   default = ""
 }
 
-variable "api_name_inference_pipeline" {
+variable "sg_lambda_inference_pipeline_id" {
   default = ""
 }
 
-variable "api_description_inference_pipeline" {
-  default = ""
-}
-
-variable "api_python_file_name_inference_pipeline" {
-  default = ""
-}
-
-variable "api_docker_file_name_inference_pipeline" {
-  default = ""
-}
-
-variable "lambda_function_memory_size_inference_pipeline" {
-  default = "512"
-}
-
-variable "lambda_function_timeout_inference_pipeline" {
-  default = "300"
-}
-
-variable "bucket_key_model_inference_pipeline" {
-  default = ""
-}
-
-variable "model_path_inference_pipeline" {
+variable "private_subnet_inference_pipeline_id" {
   default = ""
 }
 
