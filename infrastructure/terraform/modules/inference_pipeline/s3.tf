@@ -4,6 +4,7 @@ resource "aws_s3_bucket" "s3_bucket_inference_pipeline" {
 }
 
 resource "aws_s3_object" "s3_object_inference_pipeline" {
+  depends_on    = [aws_s3_bucket.s3_bucket_inference_pipeline]
   bucket        = aws_s3_bucket.s3_bucket_inference_pipeline.id
   key           = var.bucket_key_model_inference_pipeline
   force_destroy = true
@@ -12,15 +13,15 @@ resource "aws_s3_object" "s3_object_inference_pipeline" {
 }
 
 resource "aws_s3_object" "s3_object_annotated" {
-  bucket = aws_s3_bucket.s3_bucket_inference_pipeline.id
+  bucket        = aws_s3_bucket.s3_bucket_inference_pipeline.id
   force_destroy = true
-  key    = "annotated/"
-  acl    = "private"
+  key           = "annotated/"
+  acl           = "private"
 }
 
 resource "aws_s3_object" "s3_object_unannotated" {
-  bucket = aws_s3_bucket.s3_bucket_inference_pipeline.id
+  bucket        = aws_s3_bucket.s3_bucket_inference_pipeline.id
   force_destroy = true
-  key    = "unannotated/"
-  acl    = "private"
+  key           = "unannotated/"
+  acl           = "private"
 }
