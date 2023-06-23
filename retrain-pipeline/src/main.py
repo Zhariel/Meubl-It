@@ -1,5 +1,5 @@
 import logging
-from random import random
+import random
 
 import numpy as np
 import boto3
@@ -23,8 +23,9 @@ trained_data_folder_key = os.environ['TRAINED_DATA_FOLDER_KEY']
 steps = 3
 resolution = 64
 learning_rate = 0.001
-BATCH_SIZE = 4
+BATCH_SIZE = 2
 resize = transforms.Resize((resolution, resolution))
+
 
 class Block(nn.Module):
     def __init__(self, in_ch, out_ch, up=False):
@@ -45,6 +46,8 @@ class Block(nn.Module):
         h = self.bnorm1(self.relu(self.conv1(x)))
         # Down or Upsample
         return self.transform(h)
+
+
 class Unet(nn.Module):
 
     def __init__(self, labels_len, in_len):
@@ -83,6 +86,8 @@ class Unet(nn.Module):
             x = torch.cat((x, residual_x), dim=1)
             x = up(x)
         return self.output(x)
+
+
 def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
     step = random.randint(0, steps)
     mask = np.zeros_like(img)
@@ -96,6 +101,8 @@ def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
         torch.from_numpy(np.copy(clone) + (noise * step * mask)).float().unsqueeze(0), \
         torch.from_numpy(mask[:, :, 0:1]).float().unsqueeze(0), \
         torch.from_numpy(np.array(labels_list)).float()
+
+
 def crop_largest_square_around_point(width, height, box, IMG_SIZE):
     box_side = abs(box[0] - box[2])
     point = (box[0] + box_side // 2, box[1] + box_side // 2)
@@ -120,12 +127,16 @@ def crop_largest_square_around_point(width, height, box, IMG_SIZE):
 
     # returns coord after crop, coords after crop and resize
     return (left, top, right, bottom), (nleft, ntop, nright, nbottom)
+
+
 def load_from_s3(LOGGER, bucket_name, key_file):
     s3 = boto3.client('s3')
     LOGGER.info(f"Get {key_file} from {bucket_name} S3 bucket")
     response = s3.get_object(Bucket=bucket_name, Key=key_file)
     file_bytes = response['Body'].read()
     return file_bytes
+
+
 def load_model_from_s3(bucket_name, model_key, labels_len, resolution):
     s3 = boto3.client('s3')
     LOGGER.info(f"Get {model_key} from {bucket_name} S3 bucket")
@@ -139,6 +150,8 @@ def load_model_from_s3(bucket_name, model_key, labels_len, resolution):
     # LOGGER.info("Model eval")
     # model.eval()
     return model
+
+
 def save_model_from_s3(bucket_name, model_key, model):
     s3 = boto3.client('s3')
     LOGGER.info(f"Save {model_key} to {bucket_name} S3 bucket")
@@ -147,6 +160,8 @@ def save_model_from_s3(bucket_name, model_key, model):
     model_file.seek(0)
     s3.put_object(Bucket=bucket_name, Key=model_key, Body=model_file)
     return "Success - Model saved to S3 bucket"
+
+
 def preprocess(box_array, label_array, images_array, x_labels):
     coordinates = [crop_largest_square_around_point(*i.size, b, resolution) for i, b in zip(images_array, box_array)]
     images = [np.array(resize(i.crop(coords[0]))) for i, coords in zip(images_array, coordinates)]
@@ -156,6 +171,7 @@ def preprocess(box_array, label_array, images_array, x_labels):
                zip(images, labels, coordinates)]
 
     return samples, len(labels[0])
+
 
 def retrain_model(model, samples, learning_rate):
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -172,11 +188,15 @@ def retrain_model(model, samples, learning_rate):
     optimizer.step()
 
     return save_model_from_s3(bucket_name, model_key, model)
-def fake_retrain():
+
+
+def fake_retrain(LOGGER, s3, data):
     LOGGER.info("Fake retrain")
-    s3 = boto3.resource('s3')
-    s3.Object(bucket_name, annotated_data_folder_key).copy_from(CopySource=f"{bucket_name}/{trained_data_folder_key}")
-    s3.Object(bucket_name, annotated_data_folder_key).delete()
+    for i in range(1, len(data)):
+        s3.copy_object(Bucket=bucket_name, CopySource={'Bucket': bucket_name, 'Key': data[i]},
+                       Key=trained_data_folder_key + data[i].split(annotated_data_folder_key)[1])
+        s3.delete_object(Bucket=bucket_name, Key=data[i])
+
     return True
 
 
@@ -186,9 +206,9 @@ def handler(event, context):
     s3 = boto3.client('s3')
     LOGGER.info(f"Get list of images from {bucket_name}/{annotated_data_folder_key} S3 bucket")
     response = s3.list_objects(Bucket=bucket_name, Prefix=annotated_data_folder_key)
-    images = [obj['Key'] for obj in response['Contents']]
-    LOGGER.info("List images: " + str(images))
-    nb_data = (len(images) - 1) / 2
+    data = [obj['Key'] for obj in response['Contents']]
+    LOGGER.info("List images: " + str(data))
+    nb_data = (len(data) - 1) / 2
     if nb_data < BATCH_SIZE:
         LOGGER.info(f"Number of images in {bucket_name}/{annotated_data_folder_key} S3 bucket is less than batch size")
         return {"statusCode": 200, "body": "Number of images in S3 bucket is less than batch size"}
@@ -198,12 +218,12 @@ def handler(event, context):
     label_array = []
     images_array = []
 
-    for i in range(1, len(images), 2):
-        img_file = load_from_s3(LOGGER, bucket_name, images[i])
+    for i in range(1, len(data), 2):
+        img_file = load_from_s3(LOGGER, bucket_name, data[i])
         image_stream = BytesIO(img_file)
         image = Image.open(image_stream).convert('RGB')
 
-        metadata_file = load_from_s3(LOGGER, bucket_name, images[i + 1]).decode('utf-8')
+        metadata_file = load_from_s3(LOGGER, bucket_name, data[i + 1]).decode('utf-8')
         metadata = json.loads(metadata_file)
         LOGGER.info("metadata json: " + str(metadata))
         box = (
@@ -229,5 +249,6 @@ def handler(event, context):
     if retrain_model(model, samples, learning_rate) == "Success - Model saved to S3 bucket":
         LOGGER.info("Retrained")
 
-    return {"statusCode": 200, "body": "fake retrained"}
+    t = fake_retrain(LOGGER, s3, data)
 
+    return {"statusCode": 200, "body": "fake retrained"}
