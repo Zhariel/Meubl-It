@@ -3,7 +3,6 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 RUN yum update -y && yum install mesa-libGL -y
 
-## Path modèle + python file
 COPY src .
 COPY requirements.txt requirements.txt
 

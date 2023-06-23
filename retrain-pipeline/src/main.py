@@ -16,9 +16,7 @@ bucket_name = os.environ['BUCKET_NAME']
 model_key = os.environ['MODEL_KEY']
 annotated_data_folder_key = os.environ['ANNOTATED_DATA_FOLDER_KEY']
 trained_data_folder_key = os.environ['TRAINED_DATA_FOLDER_KEY']
-batch_size = 3
-
-s3 = boto3.resource('s3')
+batch_size = 2
 
 
 def load_from_s3(LOGGER, bucket_name, key_file):
@@ -31,6 +29,7 @@ def load_from_s3(LOGGER, bucket_name, key_file):
 
 def fake_retrain():
     LOGGER.info("Fake retrain")
+    s3 = boto3.resource('s3')
     s3.Object(bucket_name, annotated_data_folder_key).copy_from(CopySource=f"{bucket_name}/{trained_data_folder_key}")
     s3.Object(bucket_name, annotated_data_folder_key).delete()
     return True
@@ -38,39 +37,35 @@ def fake_retrain():
 
 def handler(event, context):
     LOGGER.info("Event: " + str(event))
-    LOGGER.info("Context: " + str(context))
 
+    s3 = boto3.client('s3')
     LOGGER.info(f"Get list of images from {bucket_name}/{annotated_data_folder_key} S3 bucket")
     response = s3.list_objects(Bucket=bucket_name, Prefix=annotated_data_folder_key)
     images = [obj['Key'] for obj in response['Contents']]
-    images_data = [s3.get_object(Bucket=bucket_name, Key=obj['Key'])['Body'].read() for obj in response['Contents']]
-
-    if len(images) < batch_size:
+    LOGGER.info("List images: " + str(images))
+    nb_data = (len(images) - 1) / 2
+    if nb_data < batch_size:
         LOGGER.info(f"Number of images in {bucket_name}/{annotated_data_folder_key} S3 bucket is less than batch size")
         return {"statusCode": 200, "body": "Number of images in S3 bucket is less than batch size"}
-
-    LOGGER.info(f"Number of images in {bucket_name}/{annotated_data_folder_key} S3 bucket is {len(images)}")
-
-    fake_retrain()
-
-    LOGGER.info("List images: " + str(images))
+    LOGGER.info(f"Number of images in {bucket_name}/{annotated_data_folder_key} S3 bucket is {nb_data}")
 
     box_array = []
     label_array = []
     images_array = []
 
-    for i in range(0, len(images), 2):
+    for i in range(1, len(images), 2):
         img_file = load_from_s3(LOGGER, bucket_name, images[i])
         image_stream = BytesIO(img_file)
         image = Image.open(image_stream).convert('RGB')
 
         metadata_file = load_from_s3(LOGGER, bucket_name, images[i + 1]).decode('utf-8')
         metadata = json.loads(metadata_file)
+        LOGGER.info("metadata json: " + str(metadata))
         box = (
-            int(metadata["start_x_axis"]),
-            int(metadata["end_x_axis"]),
-            int(metadata["start_y_axis"]),
-            int(metadata["end_y_axis"])
+            int(float(metadata["start_x_axis"])),
+            int(float(metadata["end_x_axis"])),
+            int(float(metadata["start_y_axis"])),
+            int(float(metadata["end_y_axis"]))
         )
 
         images_array.append(image)
@@ -80,5 +75,7 @@ def handler(event, context):
     LOGGER.info("Box array: " + str(box_array))
     LOGGER.info("Label array: " + str(label_array))
     LOGGER.info("Images array: " + str(images_array))
+
+    fake_retrain()
 
     return {"statusCode": 200, "body": "fake retrained"}

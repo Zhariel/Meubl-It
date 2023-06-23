@@ -13,3 +13,7 @@ output "s3_bucket_inference_pipeline_id" {
 output "s3_object_annotated_inference_pipeline_key" {
   value = aws_s3_object.s3_object_annotated.key
 }
+
+output "iam_policy_process_logging_policy_arn" {
+  value = aws_iam_policy.process_logging_policy.arn
+}

@@ -1,9 +1,5 @@
 ################ Policies ################
 
-locals {
-  process_logging_policy_name = "process_logging_policy"
-}
-
 data "aws_iam_policy_document" "iam_policy_lambda" {
   statement {
     sid     = ""
@@ -15,23 +11,6 @@ data "aws_iam_policy_document" "iam_policy_lambda" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
-}
-
-resource "aws_iam_policy" "process_logging_policy" {
-  name   = local.process_logging_policy_name
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        Action : [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        Effect : "Allow",
-        Resource : "arn:aws:logs:*:*:*"
-      }
-    ]
-  })
 }
 
 resource "aws_iam_role" "iam_role_lambda_retrain_pipeline" {
@@ -50,6 +29,6 @@ resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment_lambda_s3_
 }
 
 resource "aws_iam_role_policy_attachment" "process_logging_policy_attachment" {
-  role       = aws_iam_role.iam_role_lambda_retrain_pipeline.id
-  policy_arn = aws_iam_policy.process_logging_policy.arn
+  role       = aws_iam_role.iam_role_lambda_retrain_pipeline.name
+  policy_arn = var.iam_policy_process_logging_policy_arn
 }

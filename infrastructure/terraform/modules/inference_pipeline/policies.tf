@@ -50,6 +50,6 @@ resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment_lambda_s3_
 }
 
 resource "aws_iam_role_policy_attachment" "process_logging_policy_attachment" {
-  role       = aws_iam_role.iam_role_lambda_inference_pipeline.id
+  role       = aws_iam_role.iam_role_lambda_inference_pipeline.name
   policy_arn = aws_iam_policy.process_logging_policy.arn
 }

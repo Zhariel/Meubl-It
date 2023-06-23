@@ -65,7 +65,31 @@ variable "model_path_inference_pipeline" {
   default = ""
 }
 
-# retrain pipeline
+# Retrain Pipeline
+variable "ecr_repository_name_retrain_pipeline" {
+  default = ""
+}
+
+variable "iam_role_lambda_name_retrain_pipeline" {
+  default = ""
+}
+
 variable "lambda_function_name_retrain_pipeline" {
   default = ""
+}
+
+variable "python_file_path_retrain_pipeline" {
+  default = ""
+}
+
+variable "docker_file_path_retrain_pipeline" {
+  default = ""
+}
+
+variable "lambda_function_memory_size_retrain_pipeline" {
+  default = 512
+}
+
+variable "lambda_function_timeout_retrain_pipeline" {
+  default = 300
 }
