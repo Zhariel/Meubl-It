@@ -86,13 +86,18 @@ def prepare_training_sample(img, steps, labels, x_lis, y_lis, mask_lis, label_li
     '''
     mask = np.zeros_like(img)
     mask[y1:y2 + 1, x1:x2 + 1, :] = 1
-    noise = np.random.uniform(-1, 1, img.shape) / (steps + 1)
+    noise = np.random.randint(0, 256, size=img.shape)
+    inter = np.linspace(img, noise, steps + 1)
 
     for i in range(steps):
-        clone = np.copy(img)
-        clone[y1:y2, x1:x2, :] = 0
-        x_lis.append(torch.from_numpy(np.copy(clone) + (noise * (i + 1) * mask)).float())
-        y_lis.append(torch.from_numpy(np.copy(clone) + (noise * i * mask)).float())
+        clone_x = np.copy(img)
+        clone_y = np.copy(img)
+
+        clone_x[y1:y2, x1:x2, :] = inter[i + 1, y1:y2, x1:x2, :]
+        clone_y[y1:y2, x1:x2, :] = inter[i, y1:y2, x1:x2, :]
+
+        x_lis.append(torch.from_numpy(clone_x).float())
+        y_lis.append(torch.from_numpy(clone_y).float())
         mask_lis.append(torch.from_numpy(mask[:, :, 0:1]).float())
         label_lis.append(torch.from_numpy(labels).float())
 
@@ -119,12 +124,6 @@ def load_images_and_labels(links, labels, resolution):
                 np_labels = one_hot_labels(labels, object["name"])
                 box = find_box_from_polygon(object["polygon"])
                 coords, new_coords = crop_largest_square_around_point(*img.size, box, resolution)
-
-                # img.crop(coords).show()
-                # img.crop(box).show()
-                # test_img = resize(img.crop(coords))
-                # test_img.show()
-                # test_img.crop(new_coords).show()
 
                 img_array.append(np.array(resize(img.crop(coords))))
                 encoded_labels.append(np_labels)

@@ -57,6 +57,7 @@ class Unet(nn.Module):
         x = self.conv0(x)
         # Unet
         residual_inputs = []
+        # with torch.no_grad:
         for down in self.downs:
             x = down(x)
             residual_inputs.append(x)
@@ -69,16 +70,19 @@ class Unet(nn.Module):
 
 
 def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
-    step = random.randint(0, steps)
+    step = random.randint(0, steps - 1)
     mask = np.zeros_like(img)
     mask[y1:y2 + 1, x1:x2 + 1, :] = 1
-    noise = np.random.uniform(-1, 1, img.shape) / (steps + 1)
+    noise = np.random.randint(0, 256, size=img.shape)
+    inter = np.linspace(img, noise, steps + 1)
+    clone_x = np.copy(img)
+    clone_y = np.copy(img)
 
-    clone = np.copy(img)
-    clone[y1:y2, x1:x2, :] = 0
+    clone_x[y1:y2, x1:x2, :] = inter[step + 1, y1:y2, x1:x2, :]
+    clone_y[y1:y2, x1:x2, :] = inter[step, y1:y2, x1:x2, :]
 
-    return torch.from_numpy(np.copy(clone) + (noise * (step + 1) * mask)).float().unsqueeze(0), \
-        torch.from_numpy(np.copy(clone) + (noise * step * mask)).float().unsqueeze(0), \
+    return torch.from_numpy(clone_x).float().unsqueeze(0), \
+        torch.from_numpy(clone_y).float().unsqueeze(0), \
         torch.from_numpy(mask[:, :, 0:1]).float().unsqueeze(0), \
         torch.from_numpy(np.array(labels_list)).float()
 
@@ -127,8 +131,9 @@ imges = [np.array(resize(i.crop(coords[0]))) for i, coords in zip(imges, coordin
 labels = ["chair"] * BATCH_SIZE
 labels = [[1 if l == elt else 0 for elt in x_labels] for l in labels]
 
-normalize = transforms.Lambda(lambda t: (t * 2) - 1)
-samples = [prepare_training_sample(normalize(img), label, steps, *coords[1]) for img, label, coords in zip(imges, labels, coordinates)]
+normalize = transforms.Lambda(lambda t: ((t / 255) * 2) - 1)
+samples = [prepare_training_sample(normalize(img), label, steps, *coords[1]) for img, label, coords in
+           zip(imges, labels, coordinates)]
 
 learning_rate = 0.001
 batch_size = 1
