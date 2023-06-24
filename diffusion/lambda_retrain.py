@@ -32,13 +32,14 @@ class Unet(nn.Module):
 
     def __init__(self, labels_len, in_len):
         super().__init__()
-        image_channels = 5  # RBG, mask, labels
+        image_channels = 6  # RBG, mask, labels, time
         down_channels = (32, 64, 128, 256, 512)
         up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
         self.in_len = in_len
 
         self.linear = nn.Linear(labels_len, in_len ** 2)
+        self.time = nn.Linear(1, in_len ** 2)
 
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
 
@@ -50,14 +51,14 @@ class Unet(nn.Module):
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, mask, labels):
+    def forward(self, x, mask, labels, time):
         labels = self.linear(labels).view(x.shape[0], self.in_len, self.in_len, 1)
-        x = torch.cat((x, mask, labels), dim=3)
+        time = self.time(time).view(x.shape[0], self.in_len, self.in_len, 1)
+        x = torch.cat((x, mask, labels, time), dim=3)
         x = x.permute(0, 3, 1, 2)
         x = self.conv0(x)
         # Unet
         residual_inputs = []
-        # with torch.no_grad:
         for down in self.downs:
             x = down(x)
             residual_inputs.append(x)
@@ -67,7 +68,6 @@ class Unet(nn.Module):
             x = torch.cat((x, residual_x), dim=1)
             x = up(x)
         return self.output(x)
-
 
 def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
     step = random.randint(0, steps - 1)
@@ -84,7 +84,8 @@ def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
     return torch.from_numpy(clone_x).float().unsqueeze(0), \
         torch.from_numpy(clone_y).float().unsqueeze(0), \
         torch.from_numpy(mask[:, :, 0:1]).float().unsqueeze(0), \
-        torch.from_numpy(np.array(labels_list)).float()
+        torch.from_numpy(np.array(labels_list)).float(), \
+        torch.tensor([step]).float()
 
 
 def crop_largest_square_around_point(width, height, box, IMG_SIZE):
@@ -149,8 +150,9 @@ x = torch.cat([s[0] for s in samples])
 y = torch.cat([s[1] for s in samples])
 m = torch.cat([s[2] for s in samples])
 l = torch.stack([s[3] for s in samples])
+t = torch.stack([s[4] for s in samples])
 
-outputs = model(x, m, l)
+outputs = model(x, m, l, t)
 loss = criterion(outputs, y.permute(0, 3, 1, 2))
 
 optimizer.zero_grad()

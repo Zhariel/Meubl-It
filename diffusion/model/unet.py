@@ -27,14 +27,14 @@ class Unet(nn.Module):
 
     def __init__(self, labels_len, in_len):
         super().__init__()
-        image_channels = 5  # RBG, mask, labels
+        image_channels = 6  # RBG, mask, labels, time
         down_channels = (32, 64, 128, 256, 512)
         up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
         self.in_len = in_len
 
-
         self.linear = nn.Linear(labels_len, in_len ** 2)
+        self.time = nn.Linear(1, in_len ** 2)
 
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
 
@@ -46,9 +46,10 @@ class Unet(nn.Module):
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, mask, labels):
+    def forward(self, x, mask, labels, time):
         labels = self.linear(labels).view(x.shape[0], self.in_len, self.in_len, 1)
-        x = torch.cat((x, mask, labels), dim=3)
+        time = self.time(time).view(x.shape[0], self.in_len, self.in_len, 1)
+        x = torch.cat((x, mask, labels, time), dim=3)
         x = x.permute(0, 3, 1, 2)
         x = self.conv0(x)
         # Unet

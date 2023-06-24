@@ -32,13 +32,14 @@ class Unet(nn.Module):
 
     def __init__(self, labels_len, in_len):
         super().__init__()
-        image_channels = 5  # RBG, mask, labels
+        image_channels = 6  # RBG, mask, labels, time
         down_channels = (32, 64, 128, 256, 512)
         up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
         self.in_len = in_len
 
         self.linear = nn.Linear(labels_len, in_len ** 2)
+        self.time = nn.Linear(1, in_len ** 2)
 
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
 
@@ -50,9 +51,10 @@ class Unet(nn.Module):
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, mask, labels):
+    def forward(self, x, mask, labels, time):
         labels = self.linear(labels).view(self.in_len, self.in_len, 1).unsqueeze(0)
-        x = torch.cat((x, mask, labels), dim=3)
+        time = self.time(time).view(x.shape[0], self.in_len, self.in_len, 1)
+        x = torch.cat((x, mask, labels, time), dim=3)
         x = x.permute(0, 3, 1, 2)
         x = self.conv0(x)
         # Unet
@@ -138,17 +140,18 @@ model = Unet(len(labels), resolution)
 model.load_state_dict(torch.load(MODEL_PATH))
 
 for i in range(steps, -1, -1):
-    x = model(x, m, l).permute(0, 3, 2, 1)
+    time = torch.tensor([i]).float()
+    x = model(x, m, l, time).permute(0, 3, 2, 1)
 
 x = x.permute(0, 3, 2, 1)
 
 size = abs(box[0] - box[2])
 denormalize = transforms.Lambda(lambda t: ((t + 1) / 2) * 255)
-upscale = nn.functional.interpolate(x, size=size, mode="bilinear").squeeze().clone().detach().numpy()
-
+upscale = nn.functional.interpolate(denormalize(x), size=size, mode="bilinear").squeeze().clone().detach().numpy()
 
 output = np.array(image)
 output[box[1]:box[3], box[0]:box[2], :] = np.transpose(upscale, (1, 2, 0))
+
 
 image = Image.fromarray(output)
 image.save(IMAGE_OUTPUT)
