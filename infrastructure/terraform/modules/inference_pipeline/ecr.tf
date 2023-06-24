@@ -1,9 +1,7 @@
 ################ Elastic Container Registry ################
 
 locals {
-  ecr_image_tag                           = "latest"
-  api_python_file_name_inference_pipeline = "../../api/src/${var.api_python_file_name_inference_pipeline}"
-  api_docker_file_name_inference_pipeline = "../../api/${var.api_docker_file_name_inference_pipeline}"
+  ecr_image_tag = "latest"
 }
 
 data aws_caller_identity current {}
@@ -19,8 +17,8 @@ resource "aws_ecr_repository" "ecr_repo_inference_pipeline" {
 resource null_resource tensorflow_image {
   depends_on = [aws_ecr_repository.ecr_repo_inference_pipeline]
   triggers   = {
-    python_file = sha256(file(local.api_python_file_name_inference_pipeline))
-    docker_file = sha256(file(local.api_docker_file_name_inference_pipeline))
+    python_file = sha256(file(var.python_file_path_api_inference_pipeline))
+    docker_file = sha256(file(var.docker_file_path_api_inference_pipeline))
   }
   provisioner "local-exec" {
     command     = <<EOF

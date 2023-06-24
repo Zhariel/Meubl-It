@@ -24,12 +24,7 @@ variable "lambda_function_name_inference_pipeline" {
   default = ""
 }
 
-
-variable "bucket_name_inference_pipeline" {
-  default = ""
-}
-
-variable "bucket_name_inference_pipeline_data" {
+variable "s3_meubl_it_bucket_name" {
   default = ""
 }
 
@@ -41,27 +36,27 @@ variable "api_description_inference_pipeline" {
   default = ""
 }
 
-variable "api_python_file_name_inference_pipeline" {
+variable "python_file_path_api_inference_pipeline" {
   default = ""
 }
 
-variable "api_docker_file_name_inference_pipeline" {
+variable "docker_file_path_api_inference_pipeline" {
   default = ""
 }
 
 variable "lambda_function_memory_size_inference_pipeline" {
-  default = "512"
+  default = 512
 }
 
 variable "lambda_function_timeout_inference_pipeline" {
-  default = "300"
+  default = 300
 }
 
-variable "bucket_key_model_inference_pipeline" {
+variable "s3_object_meubl_it_model_key" {
   default = ""
 }
 
-variable "model_path_inference_pipeline" {
+variable "meubl_it_model_path" {
   default = ""
 }
 
