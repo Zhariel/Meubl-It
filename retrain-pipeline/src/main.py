@@ -52,13 +52,14 @@ class Unet(nn.Module):
 
     def __init__(self, labels_len, in_len):
         super().__init__()
-        image_channels = 5  # RBG, mask, labels
+        image_channels = 6  # RBG, mask, labels, time
         down_channels = (32, 64, 128, 256, 512)
         up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
         self.in_len = in_len
 
         self.linear = nn.Linear(labels_len, in_len ** 2)
+        self.time = nn.Linear(1, in_len ** 2)
 
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
 
@@ -70,9 +71,10 @@ class Unet(nn.Module):
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, mask, labels):
+    def forward(self, x, mask, labels, time):
         labels = self.linear(labels).view(x.shape[0], self.in_len, self.in_len, 1)
-        x = torch.cat((x, mask, labels), dim=3)
+        time = self.time(time).view(x.shape[0], self.in_len, self.in_len, 1)
+        x = torch.cat((x, mask, labels, time), dim=3)
         x = x.permute(0, 3, 1, 2)
         x = self.conv0(x)
         # Unet
@@ -87,20 +89,23 @@ class Unet(nn.Module):
             x = up(x)
         return self.output(x)
 
-
 def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
-    step = random.randint(0, steps)
+    step = random.randint(0, steps - 1)
     mask = np.zeros_like(img)
     mask[y1:y2 + 1, x1:x2 + 1, :] = 1
-    noise = np.random.uniform(-1, 1, img.shape) / (steps + 1)
+    noise = np.random.randint(0, 256, size=img.shape)
+    inter = np.linspace(img, noise, steps + 1)
+    clone_x = np.copy(img)
+    clone_y = np.copy(img)
 
-    clone = np.copy(img)
-    clone[y1:y2, x1:x2, :] = 0
+    clone_x[y1:y2, x1:x2, :] = inter[step + 1, y1:y2, x1:x2, :]
+    clone_y[y1:y2, x1:x2, :] = inter[step, y1:y2, x1:x2, :]
 
-    return torch.from_numpy(np.copy(clone) + (noise * (step + 1) * mask)).float().unsqueeze(0), \
-        torch.from_numpy(np.copy(clone) + (noise * step * mask)).float().unsqueeze(0), \
+    return torch.from_numpy(clone_x).float().unsqueeze(0), \
+        torch.from_numpy(clone_y).float().unsqueeze(0), \
         torch.from_numpy(mask[:, :, 0:1]).float().unsqueeze(0), \
-        torch.from_numpy(np.array(labels_list)).float()
+        torch.from_numpy(np.array(labels_list)).float(), \
+        torch.tensor([step]).float()
 
 
 def crop_largest_square_around_point(width, height, box, IMG_SIZE):
@@ -147,8 +152,6 @@ def load_model_from_s3(bucket_name, model_key, labels_len, resolution):
     model = Unet(labels_len, resolution)
     LOGGER.info("Load model state dict")
     model.load_state_dict(torch.load(model_file))
-    # LOGGER.info("Model eval")
-    # model.eval()
     return model
 
 
@@ -180,7 +183,8 @@ def retrain_model(model, samples, learning_rate):
     y = torch.cat([s[1] for s in samples])
     m = torch.cat([s[2] for s in samples])
     l = torch.stack([s[3] for s in samples])
-    outputs = model(x, m, l)
+    t = torch.stack([s[4] for s in samples])
+    outputs = model(x, m, l, t)
     loss = criterion(outputs, y.permute(0, 3, 1, 2))
 
     optimizer.zero_grad()
@@ -190,14 +194,12 @@ def retrain_model(model, samples, learning_rate):
     return save_model_from_s3(bucket_name, model_key, model)
 
 
-def fake_retrain(LOGGER, s3, data):
+def move_data_trained(LOGGER, s3, data):
     LOGGER.info("Fake retrain")
     for i in range(1, len(data)):
         s3.copy_object(Bucket=bucket_name, CopySource={'Bucket': bucket_name, 'Key': data[i]},
                        Key=trained_data_folder_key + data[i].split(annotated_data_folder_key)[1])
         s3.delete_object(Bucket=bucket_name, Key=data[i])
-
-    return True
 
 
 def handler(event, context):
@@ -249,6 +251,6 @@ def handler(event, context):
     if retrain_model(model, samples, learning_rate) == "Success - Model saved to S3 bucket":
         LOGGER.info("Retrained")
 
-    t = fake_retrain(LOGGER, s3, data)
+    move_data_trained(LOGGER, s3, data)
 
-    return {"statusCode": 200, "body": "fake retrained"}
+    return {"statusCode": 200, "body": "model retrained"}
