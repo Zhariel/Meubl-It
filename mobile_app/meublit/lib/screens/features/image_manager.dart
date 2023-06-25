@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ImageManagerWidget extends StatelessWidget {
   final Uint8List? pickedImage;
@@ -60,6 +59,7 @@ class ImageManagerWidget extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class _SelectionPainter extends CustomPainter {
@@ -87,26 +87,47 @@ class _SelectionPainter extends CustomPainter {
   }
 }
 
-Future<Map<String, dynamic>> resizeAndCompressImage(
-  Uint8List pickedImage,
-  double startXAxis,
-  double startYAxis,
-  double endXAxis,
-  double endYAxis,
-) async {
-  double originalImageWidth = 0.0;
-  double originalImageHeight = 0.0;
-  var decodedImage = img.decodeImage(pickedImage);
-  if (decodedImage != null) {
-    originalImageWidth = decodedImage.width.toDouble();
-    originalImageHeight = decodedImage.height.toDouble();
+Map<String, dynamic> resizeCoordinates(
+    double width,
+    double height,
+    double startXAxis,
+    double startYAxis,
+    double endXAxis,
+    double endYAxis,
+    double newWidth,
+    double newHeight) {
+  final double resizeRatioWidth = newWidth / width;
+  final double resizeRatioHeight = newHeight / height;
+  final double resizedStartXAxis = startXAxis * resizeRatioWidth;
+  final double resizedStartYAxis = startYAxis * resizeRatioHeight;
+  final double resizedEndXAxis = endXAxis * resizeRatioWidth;
+  final double resizedEndYAxis = endYAxis * resizeRatioHeight;
 
-    final double resizeRatioWidth = originalImageWidth / 500;
-    final double resizeRatioHeight = originalImageHeight / 500;
-    final double resizedStartXAxis = startXAxis * resizeRatioWidth;
-    final double resizedStartYAxis = startYAxis * resizeRatioHeight;
-    final double resizedEndXAxis = endXAxis * resizeRatioWidth;
-    final double resizedEndYAxis = endYAxis * resizeRatioHeight;
+  return {
+    'resizedStartXAxis': resizedStartXAxis,
+    'resizedStartYAxis': resizedStartYAxis,
+    'resizedEndXAxis': resizedEndXAxis,
+    'resizedEndYAxis': resizedEndYAxis
+  };
+}
+
+Future<Map<String, dynamic>> resizeAndCompressImage(
+    Uint8List pickedImage,
+    double startXAxis,
+    double startYAxis,
+    double endXAxis,
+    double endYAxis,
+    double widthScreen,
+    double heightScreen) async {
+  final decodedImage = img.decodeImage(pickedImage);
+  if (decodedImage != null) {
+    final result = resizeCoordinates(widthScreen, heightScreen, startXAxis,
+        startYAxis, endXAxis, endYAxis, 500, 500);
+
+    final double resizedStartXAxis = result['resizedStartXAxis'];
+    final double resizedStartYAxis = result['resizedStartYAxis'];
+    final double resizedEndXAxis = result['resizedEndXAxis'];
+    final double resizedEndYAxis = result['resizedEndYAxis'];
 
     var resizedImage = Uint8List.fromList(
       img.encodePng(img.copyResize(decodedImage, width: 500, height: 500)),

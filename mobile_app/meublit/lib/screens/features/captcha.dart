@@ -27,6 +27,9 @@ class _CaptchaState extends State<Captcha> {
   Rect selectedRect = Rect.zero;
   bool isSelecting = false;
 
+  double widthScreen = 0.0;
+  double heightScreen = 0.0;
+
   String? selectedFurniture;
 
   void getCaptchaImage(Uint8List? responseImage, String keyImg) {
@@ -69,6 +72,8 @@ class _CaptchaState extends State<Captcha> {
               generateImage: generateImage,
               onPanStart: (details) {
                 setState(() {
+                  widthScreen = MediaQuery.of(context).size.width;
+                  heightScreen = MediaQuery.of(context).size.width * (4 / 3);
                   startPoint = details.localPosition;
                   isSelecting = true;
                 });
@@ -76,17 +81,6 @@ class _CaptchaState extends State<Captcha> {
               onPanUpdate: (details) {
                 setState(() {
                   endPoint = details.localPosition;
-                  final double width = endPoint.dx - startPoint.dx;
-                  final double height = endPoint.dy - startPoint.dy;
-                  double sign = 1.0;
-                  if (width.sign != height.sign) {
-                    sign = -1.0;
-                  }
-                  if (width.abs() < height.abs()) {
-                    endPoint = startPoint + Offset(width, width * sign);
-                  } else {
-                    endPoint = startPoint + Offset(height * sign, height);
-                  }
                   selectedRect = Rect.fromPoints(startPoint, endPoint);
                 });
               },
@@ -97,7 +91,9 @@ class _CaptchaState extends State<Captcha> {
             const SizedBox(
               height: 10.0,
             ),
-            Text("Veuillez sélectionner le meuble"),
+            const Text(
+                "Veuillez sélectionner un meuble dans le dropdown et le sélectionner dans l'image",
+                textAlign: TextAlign.center),
             const SizedBox(
               height: 10.0,
             ),
@@ -118,13 +114,14 @@ class _CaptchaState extends State<Captcha> {
                 onPressed: () async {
                   if (captchaImage != null) {
                     captchaValid = await _requestAPI.requestCaptchaAPIService(
-                      keyImgCaptcha!,
-                      selectedFurniture!,
-                      startPoint.dx,
-                      startPoint.dy,
-                      endPoint.dx,
-                      endPoint.dy,
-                    );
+                        keyImgCaptcha!,
+                        selectedFurniture!,
+                        startPoint.dx,
+                        startPoint.dy,
+                        endPoint.dx,
+                        endPoint.dy,
+                        widthScreen,
+                        heightScreen);
                     if (captchaValid) {
                       widget.onChangedStep(1);
                     }

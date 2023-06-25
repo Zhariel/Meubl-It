@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:meublit/screens/features/image_manager.dart';
 
-
 class RequestAPI {
   Future<void> requestGenerateFurnitureAPIService(
       Function(Uint8List?) callback,
@@ -14,9 +13,11 @@ class RequestAPI {
       double startXAxis,
       double startYAxis,
       double endXAxis,
-      double endYAxis) async {
-
-    final result = await resizeAndCompressImage(pickedImage, startXAxis, startYAxis, endXAxis, endYAxis);
+      double endYAxis,
+      double widthScreen,
+      double heightScreen) async {
+    final result = await resizeAndCompressImage(pickedImage, startXAxis,
+        startYAxis, endXAxis, endYAxis, widthScreen, heightScreen);
 
     final double resizedStartXAxis = result['resizedStartXAxis'];
     final double resizedStartYAxis = result['resizedStartYAxis'];
@@ -31,7 +32,7 @@ class RequestAPI {
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zk7qv11ze9.execute-api.us-east-1.amazonaws.com/api_meubl_it/inference_pipeline'));
+            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/inference_pipeline'));
 
     request.body = json.encode({
       "encoded_img": base64PickedImage,
@@ -62,20 +63,30 @@ class RequestAPI {
       double startXAxis,
       double startYAxis,
       double endXAxis,
-      double endYAxis) async {
+      double endYAxis,
+      double widthScreen,
+      double heightScreen) async {
+    final result = resizeCoordinates(widthScreen, heightScreen,
+        startXAxis, startYAxis, endXAxis, endYAxis, 500, 500);
+
+    final double resizedStartXAxis = result['resizedStartXAxis'];
+    final double resizedStartYAxis = result['resizedStartYAxis'];
+    final double resizedEndXAxis = result['resizedEndXAxis'];
+    final double resizedEndYAxis = result['resizedEndYAxis'];
+
     var headers = {'Content-Type': 'application/json'};
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zk7qv11ze9.execute-api.us-east-1.amazonaws.com/api_meubl_it/valid_captcha'));
+            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/valid_captcha'));
 
     request.body = json.encode({
       "key_img_captcha": keyImgCaptcha,
       "selected_furniture": selectedFurniture,
-      "start-x-axis": startXAxis,
-      "start-y-axis": startYAxis,
-      "end-x-axis": endXAxis,
-      "end-y-axis": endYAxis
+      "start-x-axis": resizedStartXAxis,
+      "start-y-axis": resizedStartYAxis,
+      "end-x-axis": resizedEndXAxis,
+      "end-y-axis": resizedEndYAxis
     });
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
@@ -95,7 +106,7 @@ class RequestAPI {
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zk7qv11ze9.execute-api.us-east-1.amazonaws.com/api_meubl_it/get_captcha'));
+            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/get_captcha'));
 
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();

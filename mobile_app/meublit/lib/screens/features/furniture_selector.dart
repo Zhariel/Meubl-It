@@ -25,20 +25,28 @@ class _FurnitureSelectorState extends State<FurnitureSelector> {
       },
       items: const [
         DropdownMenuItem<String>(
-          value: 'Meuble1',
-          child: Text('Meuble 1'),
+          value: 'chair',
+          child: Text('Chair'),
         ),
         DropdownMenuItem<String>(
-          value: 'Meuble2',
-          child: Text('Meuble 2'),
+          value: 'bookshelf',
+          child: Text('Bookshelf'),
         ),
         DropdownMenuItem<String>(
-          value: 'Meuble3',
-          child: Text('Meuble 3'),
+          value: 'dresser',
+          child: Text('Dresser'),
         ),
         DropdownMenuItem<String>(
-          value: 'Meuble4',
-          child: Text('Meuble 4'),
+          value: 'sofa',
+          child: Text('Sofa'),
+        ),
+        DropdownMenuItem<String>(
+          value: 'table',
+          child: Text('Table'),
+        ),
+        DropdownMenuItem<String>(
+          value: 'no_meuble',
+          child: Text("Il n'y a pas de meuble"),
         ),
       ],
     );
