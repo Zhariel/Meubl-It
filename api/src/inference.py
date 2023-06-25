@@ -1,27 +1,27 @@
-import torch
-import torch.nn as nn
-import torchvision.transforms as transforms
-import numpy as np
-import base64
-import math
-import boto3
-from PIL import Image
 from io import BytesIO
 import zlib
 import datetime
+import random
+import base64
 
 from utils import load_from_s3
 
-BATCH_SIZE = 1
-T = 300
-MODEL_DIVIDER = 1
-device = "cpu"
+import torch
+import torch.nn as nn
+from torchvision import transforms
+import numpy as np
+import boto3
+from PIL import Image
+
+STEPS = 3
+RESOLUTION_IMG = 64
+x_labels = ['chair', 'bookshelf', 'dresser', 'sofa', 'table']
 
 
-def load_model_from_s3(LOGGER, bucket_name, model_key):
+def load_model_from_s3(LOGGER, bucket_name, model_key, label_size):
     model_file = load_from_s3(LOGGER, bucket_name, model_key)
     LOGGER.info("Load model from s3 bucket")
-    model = SimpleUnet(DIVIDER=MODEL_DIVIDER)
+    model = Unet(label_size, RESOLUTION_IMG)
     LOGGER.info("Load model state dict")
     model.load_state_dict(torch.load(model_file))
     LOGGER.info("Model eval")
@@ -30,9 +30,8 @@ def load_model_from_s3(LOGGER, bucket_name, model_key):
 
 
 class Block(nn.Module):
-    def __init__(self, in_ch, out_ch, time_emb_dim, up=False):
+    def __init__(self, in_ch, out_ch, up=False):
         super().__init__()
-        self.time_mlp = nn.Linear(time_emb_dim, out_ch)
         if up:
             self.conv1 = nn.Conv2d(2 * in_ch, out_ch, 3, padding=1)
             self.transform = nn.ConvTranspose2d(out_ch, out_ch, 4, 2, 1)
@@ -44,127 +43,69 @@ class Block(nn.Module):
         self.bnorm2 = nn.BatchNorm2d(out_ch)
         self.relu = nn.ReLU()
 
-    def forward(self, x, t, ):
+    def forward(self, x):
         # First Conv
         h = self.bnorm1(self.relu(self.conv1(x)))
-        # Time embedding
-        time_emb = self.relu(self.time_mlp(t))
-        # Extend last 2 dimensions
-        time_emb = time_emb[(...,) + (None,) * 2]
-        # Add time channel
-        h = h + time_emb
-        # Second Conv
-        h = self.bnorm2(self.relu(self.conv2(h)))
         # Down or Upsample
         return self.transform(h)
 
 
-class SinusoidalPositionEmbeddings(nn.Module):
-    def __init__(self, dim):
+class Unet(nn.Module):
+
+    def __init__(self, labels_len, in_len):
         super().__init__()
-        self.dim = dim
-
-    def forward(self, time):
-        device = time.device
-        half_dim = self.dim // 2
-        embeddings = math.log(10000) / (half_dim - 1)
-        embeddings = torch.exp(torch.arange(half_dim, device=device) * -embeddings)
-        embeddings = time[:, None] * embeddings[None, :]
-        embeddings = torch.cat((embeddings.sin(), embeddings.cos()), dim=-1)
-        # TODO: Double check the ordering here
-        return embeddings
-
-
-class SimpleUnet(nn.Module):
-    """
-    A simplified variant of the Unet architecture.
-    """
-
-    def __init__(self, DIVIDER=1):
-        super().__init__()
-        image_channels = 3
-        down_channels = tuple(value // DIVIDER for value in (32, 64, 128, 256, 512))
-        up_channels = tuple(value // DIVIDER for value in (512, 256, 128, 64, 32))
+        image_channels = 6  # RBG, mask, labels, time
+        down_channels = (32, 64, 128, 256, 512)
+        up_channels = (512, 256, 128, 64, 32)
         out_dim = 3
-        time_emb_dim = 32
+        self.in_len = in_len
 
-        # Time embedding
-        self.time_mlp = nn.Sequential(
-            SinusoidalPositionEmbeddings(time_emb_dim),
-            nn.Linear(time_emb_dim, time_emb_dim),
-            nn.ReLU()
-        )
+        self.linear = nn.Linear(labels_len, in_len ** 2)
+        self.time = nn.Linear(1, in_len ** 2)
 
-        # Initial projection
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
 
-        # Downsample
-        self.downs = nn.ModuleList([Block(down_channels[i], down_channels[i + 1], \
-                                          time_emb_dim) \
+        self.downs = nn.ModuleList([Block(down_channels[i], down_channels[i + 1]) \
                                     for i in range(len(down_channels) - 1)])
-        # Upsample
-        self.ups = nn.ModuleList([Block(up_channels[i], up_channels[i + 1], \
-                                        time_emb_dim, up=True) \
+
+        self.ups = nn.ModuleList([Block(up_channels[i], up_channels[i + 1], up=True) \
                                   for i in range(len(up_channels) - 1)])
 
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, timestep):
-        # Embedd time
-        t = self.time_mlp(timestep)
-        # Initial conv
+    def forward(self, x, mask, labels, time):
+        labels = self.linear(labels).view(self.in_len, self.in_len, 1).unsqueeze(0)
+        time = self.time(time).view(x.shape[0], self.in_len, self.in_len, 1)
+        x = torch.cat((x, mask, labels, time), dim=3)
+        x = x.permute(0, 3, 1, 2)
         x = self.conv0(x)
         # Unet
         residual_inputs = []
-        with torch.no_grad():
-            for down in self.downs:
-                x = down(x, t)
-                residual_inputs.append(x)
-            for up in self.ups:
-                residual_x = residual_inputs.pop()
-                # Add residual x as additional channels
-                x = torch.cat((x, residual_x), dim=1)
-                x = up(x, t)
+        # with torch.no_grad:
+        for down in self.downs:
+            x = down(x)
+            residual_inputs.append(x)
+        for up in self.ups:
+            residual_x = residual_inputs.pop()
+            # Add residual x as additional channels
+            x = torch.cat((x, residual_x), dim=1)
+            x = up(x)
         return self.output(x)
 
 
-def get_index_from_list(vals, t, x_shape):
-    """
-    Returns a specific index t of a passed list of values vals
-    while considering the batch dimension.
-    """
-    batch_size = t.shape[0]
-    out = vals.gather(-1, t.cpu())
-    return out.reshape(batch_size, *((1,) * (len(x_shape) - 1))).to(t.device)
+def prepare_training_sample(img, labels_list, steps, x1, y1, x2, y2):
+    step = random.randint(0, steps - 1)
+    mask = np.zeros_like(img)
+    mask[y1:y2 + 1, x1:x2 + 1, :] = 1
+    noise = np.random.randint(0, 256, size=img.shape)
+    inter = np.linspace(img, noise, steps + 1)
+    clone_x = np.copy(img)
 
+    clone_x[y1:y2, x1:x2, :] = inter[step + 1, y1:y2, x1:x2, :]
 
-def forward_diffusion_sample(x_0, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, xy1, xy2, device="cpu"):
-    """
-    Takes an image and a timestep as input and
-    returns the noisy version of it
-    """
-    noise = torch.randn_like(x_0)
-    sqrt_alphas_cumprod_t = get_index_from_list(sqrt_alphas_cumprod, t, x_0.shape)
-    sqrt_one_minus_alphas_cumprod_t = get_index_from_list(
-        sqrt_one_minus_alphas_cumprod, t, x_0.shape
-    )
-
-    noisy_image = sqrt_alphas_cumprod_t.to(device) * x_0.to(device) \
-                  + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device)
-
-    masked_noisy_image = mask_image_tensor(x_0, noisy_image, *xy1, *xy2)
-
-    return masked_noisy_image.to(device)
-
-
-def mask_image_tensor(t1, t2, x1, y1, x2, y2):
-    mask = torch.zeros_like(t1)
-
-    mask[:, :, y1 - 1:y2, x1 - 1:x2] = 1
-    masked_t2 = t2 * mask
-    t1[:, :, y1 - 1:y2, x1 - 1:x2] = 0
-
-    return t1 + masked_t2
+    return torch.from_numpy(clone_x).float().unsqueeze(0), \
+        torch.from_numpy(mask[:, :, 0:1]).float().unsqueeze(0), \
+        torch.from_numpy(np.array(labels_list)).float()
 
 
 def crop_largest_square_around_point(width, height, box, IMG_SIZE):
@@ -189,67 +130,59 @@ def crop_largest_square_around_point(width, height, box, IMG_SIZE):
     nright = int((box[2] - left) * scale_factor)
     nbottom = int((box[3] - top) * scale_factor)
 
+    # returns coord after crop, coords after crop and resize
     return (left, top, right, bottom), (nleft, ntop, nright, nbottom)
 
 
-def linear_beta_schedule(timesteps, start=0.0001, end=0.02):
-    return torch.linspace(start, end, timesteps)
+def inference(LOGGER, image, box, label, bucket_name, model_key):
+    resize = transforms.Resize((RESOLUTION_IMG, RESOLUTION_IMG))
+    coords, newcoords = crop_largest_square_around_point(*image.size, box, RESOLUTION_IMG)
 
+    img = np.array(resize(image.crop(coords)))
+    labels = [1 if label == elt else 0 for elt in x_labels]
+    normalize = transforms.Lambda(lambda t: ((t / 255) * 2) - 1)
 
-def code_romain(T, model, img, x1, y1, x2, y2):
-    box = (int(x1), int(y1), int(x2), int(y2))
-    betas = linear_beta_schedule(timesteps=T)
-    alphas = 1. - betas
-    alphas_cumprod = torch.cumprod(alphas, axis=0)
-    sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
-    sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - alphas_cumprod)
+    x, m, l = prepare_training_sample(normalize(img), labels, STEPS, *newcoords)
 
-    IMG_SIZE = 64
+    LOGGER.info("Read model in s3 bucket")
+    model = load_model_from_s3(LOGGER, bucket_name, model_key, len(labels))
 
-    preprocess = transforms.Compose([
-        transforms.Resize((IMG_SIZE, IMG_SIZE)),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Lambda(lambda t: (t * 2) - 1)
-    ])
+    for i in range(STEPS, -1, -1):
+        time = torch.tensor([i]).float()
+        x = model(x, m, l, time).permute(0, 3, 2, 1)
 
-    coord, newbox = crop_largest_square_around_point(*img.size, box, IMG_SIZE)
-    image = img.crop(coord)
+    x = x.permute(0, 3, 2, 1)
 
-    input_tensor = preprocess(image).unsqueeze(0)
+    denormalize = transforms.Lambda(lambda t: ((t + 1) / 2) * 255)
 
-    t = torch.linspace(T - 1, T - 1, BATCH_SIZE, device=device).long()
+    pred = x[:, :, newcoords[1]:newcoords[3], newcoords[0]:newcoords[2]]
 
-    x_noisy = forward_diffusion_sample(input_tensor, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod,
-                                       (box[0], box[1]), (box[2], box[3]), device="cpu")
+    w = abs(box[0] - box[2])
+    h = abs(box[1] - box[3])
 
-    while T > 0:
-        print(f"T = {T}")
-        T -= 1
-        t -= 1
-        x_noisy = model(x_noisy, t)
+    LOGGER.info(f"denormalize(pred) shape : {denormalize(pred).shape}")
+    LOGGER.info(f"w : {w}")
+    LOGGER.info(f"h : {h}")
 
-    output_tensor = x_noisy.squeeze(0)
-    output_tensor = output_tensor.permute(1, 2, 0)
-    output_tensor = output_tensor.detach().cpu().numpy()
+    upscale = nn.functional.interpolate(denormalize(pred), size=(h, w), mode="bilinear").squeeze().clone().detach().numpy()
 
-    output_tensor = (output_tensor * 255).astype(np.uint8)
-
-    output_image = Image.fromarray(output_tensor)
+    LOGGER.info(f"upscale shape : {upscale.shape}")
+    output = np.array(image)
+    LOGGER.info(f"output image shape : {output.shape}")
+    LOGGER.info(f"transpose upscale shape : {np.transpose(upscale, (1, 2, 0)).shape}")
+    output[box[1]:box[3], box[0]:box[2], :] = np.transpose(upscale, (1, 2, 0))
+    output_image = Image.fromarray(output)
 
     return output_image
 
 
-def inference_model(LOGGER, encoded_img, selected_furniture, start_x_axis, end_x_axis, start_y_axis, end_y_axis,
-                    bucket_name, model_key, unannotated_data_folder_key):
+def inference_model_pipeline(LOGGER, encoded_img, selected_furniture, start_x_axis, start_y_axis, end_x_axis,
+                             end_y_axis, bucket_name, model_key, unannotated_data_folder_key):
     LOGGER.info("Selected furniture: " + selected_furniture)
     LOGGER.info("start_x_axis: " + str(start_x_axis))
-    LOGGER.info("end_x_axis: " + str(end_x_axis))
     LOGGER.info("start_y_axis: " + str(start_y_axis))
+    LOGGER.info("end_x_axis: " + str(end_x_axis))
     LOGGER.info("end_y_axis: " + str(end_y_axis))
-
-    LOGGER.info("Read model in s3 bucket")
-    model = load_model_from_s3(LOGGER, bucket_name, model_key)
 
     LOGGER.info("Decode the image from base64")
     decoded_image = base64.b64decode(encoded_img)
@@ -267,7 +200,9 @@ def inference_model(LOGGER, encoded_img, selected_furniture, start_x_axis, end_x
     image = Image.open(image_stream).convert('RGB')
 
     LOGGER.info("Inference")
-    output_image = code_romain(T, model, image, start_x_axis, start_y_axis, end_x_axis, end_y_axis)
+    box = (int(float(start_x_axis)), int(float(start_y_axis)), int(float(end_x_axis)), int(float(end_y_axis)))
+    output_image = inference(LOGGER=LOGGER, image=image, box=box, label=selected_furniture, bucket_name=bucket_name,
+                             model_key=model_key)
 
     output_image_bytes = BytesIO()
     output_image.save(output_image_bytes, format='PNG')

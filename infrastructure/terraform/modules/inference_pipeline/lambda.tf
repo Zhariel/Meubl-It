@@ -2,8 +2,8 @@
 
 locals {
   lambda_permission_statement_id_inference_pipeline = "AllowExecutionFromAPIGatewayInferencePipeline"
-  lambda_permission_statement_id_valid_captcha = "AllowExecutionFromAPIGatewayValidCaptcha"
-  lambda_permission_statement_id_get_captcha = "AllowExecutionFromAPIGatewayGetCaptcha"
+  lambda_permission_statement_id_valid_captcha      = "AllowExecutionFromAPIGatewayValidCaptcha"
+  lambda_permission_statement_id_get_captcha        = "AllowExecutionFromAPIGatewayGetCaptcha"
 }
 
 resource "aws_lambda_function" "lambda_function_inference_pipeline" {
@@ -20,8 +20,8 @@ resource "aws_lambda_function" "lambda_function_inference_pipeline" {
   }
   environment {
     variables = {
-      BUCKET_NAME                 = var.bucket_name_inference_pipeline
-      MODEL_KEY                   = var.bucket_key_model_inference_pipeline
+      BUCKET_NAME                 = var.s3_meubl_it_bucket_name
+      MODEL_KEY                   = var.s3_object_meubl_it_model_key
       UNANNOTATED_DATA_FOLDER_KEY = aws_s3_object.s3_object_unannotated.key
       ANNOTATED_DATA_FOLDER_KEY   = aws_s3_object.s3_object_annotated.key
     }

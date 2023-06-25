@@ -7,7 +7,7 @@ output "private_subnet_inference_pipeline_id" {
 }
 
 output "s3_bucket_inference_pipeline_id" {
-  value = aws_s3_bucket.s3_bucket_inference_pipeline.id
+  value = aws_s3_bucket.s3_meubl_it_bucket.id
 }
 
 output "s3_object_annotated_inference_pipeline_key" {

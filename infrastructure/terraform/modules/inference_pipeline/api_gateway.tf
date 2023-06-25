@@ -2,7 +2,7 @@
 
 resource "aws_api_gateway_rest_api" "api_gw_inference_pipeline" {
   name        = var.api_name_inference_pipeline
-  description = "API Gateway Meubl'It"
+  description = var.api_description_inference_pipeline
 
   binary_media_types = [
     "*/*"
@@ -42,34 +42,6 @@ resource "aws_api_gateway_method_response" "method_response_api_gw_inference_pip
   }
 }
 
-#resource "aws_api_gateway_method" "options_method_api_gw_inference_pipeline" {
-#    depends_on = [
-#      aws_api_gateway_resource.resource_api_gw_inference_pipeline
-#    ]
-#    rest_api_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-#    resource_id   = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-#    http_method   = "OPTIONS"
-#    authorization = "NONE"
-#}
-#
-#resource "aws_api_gateway_method_response" "options_method_response_api_gw_inference_pipeline" {
-#    depends_on = [
-#      aws_api_gateway_method.options_method_api_gw_inference_pipeline
-#    ]
-#    rest_api_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-#    resource_id   = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-#    http_method   = aws_api_gateway_method.options_method_api_gw_inference_pipeline.http_method
-#    status_code   = "200"
-#    response_models = {
-#        "application/json" = "Empty"
-#    }
-#    response_parameters = {
-#        "method.response.header.Access-Control-Allow-Headers" = true,
-#        "method.response.header.Access-Control-Allow-Methods" = true,
-#        "method.response.header.Access-Control-Allow-Origin" = true
-#    }
-#}
-
 resource "aws_api_gateway_integration" "integration_api_gw_inference_pipeline" {
   depends_on = [
     aws_api_gateway_method.method_api_gw_inference_pipeline
@@ -95,31 +67,6 @@ resource "aws_api_gateway_integration_response" "integration_response_api_gw_inf
     "application/json" = "Empty"
   }
 }
-
-#resource "aws_api_gateway_integration" "options_integration_api_gw_inference_pipeline" {
-#    depends_on = [
-#      aws_api_gateway_method.options_method_api_gw_inference_pipeline
-#    ]
-#    rest_api_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-#    resource_id   = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-#    http_method   = aws_api_gateway_method.options_method_api_gw_inference_pipeline.http_method
-#    type          = "MOCK"
-#}
-#
-#resource "aws_api_gateway_integration_response" "options_integration_response_api_gw_inference_pipeline" {
-#    depends_on = [
-#      aws_api_gateway_method_response.options_method_response_api_gw_inference_pipeline
-#    ]
-#    rest_api_id   = aws_api_gateway_rest_api.api_gw_inference_pipeline.id
-#    resource_id   = aws_api_gateway_resource.resource_api_gw_inference_pipeline.id
-#    http_method   = aws_api_gateway_method.options_method_api_gw_inference_pipeline.http_method
-#    status_code   = aws_api_gateway_method_response.options_method_response_api_gw_inference_pipeline.status_code
-#    response_parameters = {
-#        "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-#        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-#        "method.response.header.Access-Control-Allow-Origin" = "'*'"
-#    }
-#}
 
 # Valid Captcha
 resource "aws_api_gateway_resource" "resource_api_gw_valid_captcha" {

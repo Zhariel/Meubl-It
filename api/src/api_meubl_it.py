@@ -1,7 +1,7 @@
 import logging
 import os
 
-from inference import inference_model
+from inference import inference_model_pipeline
 from captcha import load_captcha, save_captcha_data
 
 from fastapi import FastAPI, Request, Body, UploadFile, File
@@ -36,12 +36,13 @@ async def inference_pipeline(payload: dict = Body(...)):
     encoded_img = payload["encoded_img"]
     selected_furniture = payload["selected_furniture"]
     start_x_axis = payload["start-x-axis"]
-    end_x_axis = payload["end-x-axis"]
     start_y_axis = payload["start-y-axis"]
+    end_x_axis = payload["end-x-axis"]
     end_y_axis = payload["end-y-axis"]
 
-    output_image_base64 = inference_model(LOGGER, encoded_img, selected_furniture, start_x_axis, end_x_axis,
-                                          start_y_axis, end_y_axis, BUCKET_NAME, MODEL_KEY, UNANNOTATED_DATA_FOLDER_KEY)
+    output_image_base64 = inference_model_pipeline(LOGGER, encoded_img, selected_furniture, start_x_axis, start_y_axis,
+                                                   end_x_axis, end_y_axis, BUCKET_NAME, MODEL_KEY,
+                                                   UNANNOTATED_DATA_FOLDER_KEY)
 
     LOGGER.info("End inference pipeline")
     return {
