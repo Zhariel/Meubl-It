@@ -1,6 +1,6 @@
 # Meubl-It
 
-![alt text](https://i.imgur.com/9em6RSO.png)
+![alt text](https://i.imgur.com/QmZQ3FQ.png)
 
 
 
