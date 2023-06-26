@@ -140,7 +140,7 @@ def inference(LOGGER, image, box, label, bucket_name, model_key):
 
     img = np.array(resize(image.crop(coords)))
     labels = [1 if label == elt else 0 for elt in x_labels]
-    normalize = transforms.Lambda(lambda t: ((t / 255) * 2) - 1)
+    normalize = transforms.Lambda(lambda t: (t / 255))
 
     x, m, l = prepare_training_sample(normalize(img), labels, STEPS, *newcoords)
 
@@ -153,7 +153,7 @@ def inference(LOGGER, image, box, label, bucket_name, model_key):
 
     x = x.permute(0, 3, 2, 1)
 
-    denormalize = transforms.Lambda(lambda t: ((t + 1) / 2) * 255)
+    denormalize = transforms.Lambda(lambda t: (t * 255))
 
     pred = x[:, :, newcoords[1]:newcoords[3], newcoords[0]:newcoords[2]]
 
