@@ -23,7 +23,7 @@ x_labels = ['chair', 'bookshelf', 'dresser', 'sofa', 'table']
 
 LABEL_SHAPE = len(x_labels)
 links = gather_links()
-links += gather_links(folder="home_or_hotel")[:500]
+links += gather_links(folder="home_or_hotel")[:250]
 
 print("Extracting images")
 # images, box_coords, labels = test_load_images_and_labels([], x_labels, res)
@@ -40,7 +40,7 @@ for sample in tqdm(zip(images, box_coords, labels)):
     prepare_training_sample(image, T, label, normalize, x_list, y_list, mask_list, label_list, time_list, *box)
 
 learning_rate = 0.001
-batch_size = 32
+batch_size = 128
 num_epochs = 100
 
 print("Creating dataset")
@@ -73,4 +73,4 @@ name = writer.get_logdir()
 name = name.replace('runs\\', '')
 name = name.rsplit('_', 1)[0]
 
-torch.save(model.state_dict(), os.path.join('model', name + '.pkl'))
+torch.save(model.state_dict(), os.path.join('model', '0-1' + name + '.pkl'))

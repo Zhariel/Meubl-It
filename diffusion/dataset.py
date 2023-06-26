@@ -148,19 +148,19 @@ def load_images_and_labels(links, labels, resolution):
 def find_box_from_polygon(polygon):
     return min(polygon['x']), min(polygon['y']), max(polygon['x']), max(polygon['y'])
 
-# def test_load_images_and_labels(links, labels, resolution):
+# def load_images_and_labels(links, labels, resolution):
 #     links = [
-#         # os.path.join('assets', 'pics', '1.PNG'),
-#         # os.path.join('assets', 'pics', '2.PNG'),
-#         # os.path.join('assets', 'pics', '3.PNG'),
-#         # os.path.join('assets', 'pics', '4.PNG'),
+#         os.path.join('assets', 'pics', '1.PNG'),
+#         os.path.join('assets', 'pics', '2.PNG'),
+#         os.path.join('assets', 'pics', '3.PNG'),
+#         os.path.join('assets', 'pics', '4.PNG'),
 #         os.path.join('assets', 'pics', '5.PNG'),
 #     ]
 #     boxes = [
-#         # (540, 360, 540+175, 360+175),
-#         # (0, 390, 0+320, 390+320),
-#         # (495, 415, 495+230, 415+230),
-#         # (150, 310, 150+300, 310+300),
+#         (540, 360, 540+175, 360+175),
+#         (0, 390, 0+320, 390+320),
+#         (495, 415, 495+230, 415+230),
+#         (150, 310, 150+300, 310+300),
 #         (355, 1100, 355 + 200, 1100 + 200),
 #     ]
 #     images = [Image.open(link) for link in links]
@@ -177,11 +177,11 @@ def find_box_from_polygon(polygon):
 #     for i, b in zip(images, boxes):
 #         coords, new_coords = crop_largest_square_around_point(*i.size, b, resolution)
 #
-#         # i.crop(coords).show()
-#         # i.crop(b).show()
-#         # test_img = resize(i.crop(coords))
-#         # test_img.show()
-#         # test_img.crop(new_coords).show()
+#         i.crop(coords).show()
+#         i.crop(b).show()
+#         test_img = resize(i.crop(coords))
+#         test_img.show()
+#         test_img.crop(new_coords).show()
 #
 #         img_array.append(np.array(resize(i.crop(coords))))
 #         cropped_and_resized_box_coords.append(new_coords)

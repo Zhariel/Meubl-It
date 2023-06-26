@@ -116,15 +116,16 @@ steps = 3
 resolution = 64
 BATCH_SIZE = 4
 MODEL_PATH = os.path.join('model', 'model.pkl')
-IMAGE_INPUT = os.path.join('assets', 'adesample', 'a.jpg')
-IMAGE_OUTPUT = os.path.join('assets', 'adesample', 'b.jpg')
+IMAGE_INPUT = os.path.join('assets', 'infersample', 'b.jpg')
+IMAGE_OUTPUT = os.path.join('assets', 'infersample', 'w.jpg')
 x_labels = ['chair', 'bookshelf', 'dresser', 'sofa', 'table']
 resize = transforms.Resize((resolution, resolution))
 
 from PIL import Image  # Remove this
 
-image = Image.open(os.path.join('assets', 'adesample', 'a.jpg'))
-box = (50, 50, 250, 250)
+image = Image.open(IMAGE_INPUT)
+# box = (50, 50, 150, 250)
+box = (685, 500, 1040, 950)
 coords, newcoords = crop_largest_square_around_point(*image.size, box, resolution)
 
 img = np.array(resize(image.crop(coords)))
@@ -143,15 +144,25 @@ for i in range(steps, -1, -1):
     time = torch.tensor([i]).float()
     x = model(x, m, l, time).permute(0, 3, 2, 1)
 
+from utils import show_img
+
+
 x = x.permute(0, 3, 2, 1)
 
 size = abs(box[0] - box[2])
 denormalize = transforms.Lambda(lambda t: ((t + 1) / 2) * 255)
-upscale = nn.functional.interpolate(denormalize(x), size=size, mode="bilinear").squeeze().clone().detach().numpy()
+
+show_img(denormalize(x))
+
+pred = x[:, :, newcoords[1]:newcoords[3], newcoords[0]:newcoords[2]]
+
+w = abs(box[0] - box[2])
+h = abs(box[1] - box[3])
+
+upscale = nn.functional.interpolate(denormalize(pred), size=(h, w), mode="bilinear").squeeze().clone().detach().numpy()
 
 output = np.array(image)
 output[box[1]:box[3], box[0]:box[2], :] = np.transpose(upscale, (1, 2, 0))
-
 
 image = Image.fromarray(output)
 image.save(IMAGE_OUTPUT)
