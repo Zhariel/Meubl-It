@@ -1,65 +1,76 @@
 import os
+import numpy as np
+import torch.nn.functional as F
 
-import torchvision.datasets
+from diffusion.model.unet import Unet
+from dataset import ListDataset, gather_links, one_hot_labels, prepare_training_sample, load_images_and_labels
 from torchvision import transforms
+from torch.utils.tensorboard import SummaryWriter
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from tqdm import tqdm
 from PIL import Image
-from diffusion.dataset import custom_dataset
-from torch.utils.data import DataLoader
+import random
 
-from diffusion.model.unet import UNet
-from diffusion.model_original.unet import SimpleUnet
-from diffusion.scheduler import *
+res = 64
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+T = 3
 
-from torch.optim import Adam
+x_labels = ['chair', 'bookshelf', 'dresser', 'sofa', 'table']
 
-IMAGE_PATH = os.path.join('assets', 'image.jpg')
-IMG_SIZE = 64
-BATCH_SIZE = 128
-device = "cuda" if torch.cuda.is_available() else "cpu"
+LABEL_SHAPE = len(x_labels)
+links = gather_links()
+links += gather_links(folder="home_or_hotel")[:250]
 
-T = 300
-betas = linear_beta_schedule(timesteps=T)
+print("Extracting images")
+# images, box_coords, labels = test_load_images_and_labels([], x_labels, res)
+images, box_coords, labels = load_images_and_labels(links, x_labels, res)
+tensor = transforms.ToTensor()
+# normalize = transforms.Lambda(lambda t: ((t / 255) * 2) - 1)
+normalize = transforms.Lambda(lambda t: t / 255)
 
-# Pre-calculate different terms for closed form
-alphas = 1. - betas
-alphas_cumprod = torch.cumprod(alphas, axis=0)
-alphas_cumprod_prev = F.pad(alphas_cumprod[:-1], (1, 0), value=1.0)
-sqrt_recip_alphas = torch.sqrt(1.0 / alphas)
-sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
-sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - alphas_cumprod)
-posterior_variance = betas * (1. - alphas_cumprod_prev) / (1. - alphas_cumprod)
+print("Preparing samples")
+x_list, y_list, mask_list, label_list, time_list = [], [], [], [], []
+for sample in tqdm(zip(images, box_coords, labels)):
+    image, box, labels = sample
+    label = one_hot_labels(labels, np.random.choice(labels))
+    prepare_training_sample(image, T, label, normalize, x_list, y_list, mask_list, label_list, time_list, *box)
 
-# model = UNet()
-model = SimpleUnet()
+learning_rate = 0.001
+batch_size = 128
+num_epochs = 100
 
-data = custom_dataset(IMG_SIZE=64)
-l = len(data)
-BATCH_SIZE = 128 if l > 128 else l
-dataloader = DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
+print("Creating dataset")
+dataset = ListDataset(x_list, mask_list, label_list, y_list, time_list, device)
+dataset.shuffle()
+dataloader = DataLoader(dataset, batch_size=batch_size)
+model = Unet(LABEL_SHAPE, res).to(device)
 
-model.to(device)
-optimizer = Adam(model.parameters(), lr=0.001)
-epochs = 1
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+writer = SummaryWriter()
 
-# t = torch.randint(0, T, (BATCH_SIZE,), device=device).long()
-# loss = get_loss(model, input_tensor, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, device)
-# d = torchvision.datasets.StanfordCars(root=".", download=False)
+print("Starting training")
+for epoch in range(num_epochs):
+    for i, (x, m, l, target, time) in enumerate(dataloader):
+        outputs = model(x, m, l, time)
+        loss = F.l1_loss(outputs, target.permute(0, 3, 1, 2))
 
-for epoch in range(epochs):
-    for step, batch in enumerate(dataloader):
         optimizer.zero_grad()
-        image, annotations, box = batch
-
-        t = torch.randint(0, 1, (BATCH_SIZE,), device=device).long()
-
-        loss = get_loss(model, image, t, sqrt_alphas_cumprod, sqrt_one_minus_alphas_cumprod, box, device)
-        print(loss)
         loss.backward()
         optimizer.step()
 
-        if epoch % 5 == 0 and step == 0:
-            print(f"Epoch {epoch} | step {step:03d} Loss: {loss.item()} ")
-            # sample_plot_image(IMG_SIZE, T, device, model, betas, sqrt_one_minus_alphas_cumprod, sqrt_recip_alphas, posterior_variance)
+        writer.add_scalar('Loss', loss.item(), epoch)
 
+        if i % 5 == 0:
+            print(f"Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(dataloader)}], Loss: {loss.item():.4f}")
 
+writer.close()
+model = model.to("cpu")
+name = writer.get_logdir()
+name = name.replace('runs\\', '')
+name = name.rsplit('_', 1)[0]
 
+torch.save(model.state_dict(), os.path.join('model', '0-1' + name + '.pkl'))

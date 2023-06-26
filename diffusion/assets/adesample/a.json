@@ -1,0 +1,2357 @@
+{
+  "annotation": {
+    "filename": "ADE_train_00001207.jpg",
+    "folder": "ADE20K_2021_17_01/images/ADE/training/home_or_hotel/alcove",
+    "imsize": [
+      800,
+      530,
+      3
+    ],
+    "source": {
+      "folder": "static_sun_database/a/alcove",
+      "filename": "sun_aacifihuzjwfbqbq.jpg",
+      "origin": "Downloaded from Google search. Image might be subject to copyright. Use only for non-commercial research and educational purposes."
+    },
+    "scene": [
+      "indoor",
+      "home or hotel",
+      "alcove"
+    ],
+    "object": [
+      {
+        "id": 0,
+        "name": "ceiling",
+        "name_ndx": 447,
+        "hypernym": [
+          "ceiling",
+          "upper surface",
+          "side",
+          "surface",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "ceiling",
+        "attributes": [],
+        "depth_ordering_rank": 1,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_000_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            0,
+            78,
+            79,
+            213,
+            437,
+            443,
+            3
+          ],
+          "y": [
+            73,
+            54,
+            85,
+            119,
+            88,
+            0,
+            0
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 1,
+        "name": "wall",
+        "name_ndx": 2978,
+        "hypernym": [
+          "wall",
+          "partition, divider",
+          "structure, construction",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "wall",
+        "attributes": [],
+        "depth_ordering_rank": 2,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_001_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            81,
+            0,
+            2,
+            75
+          ],
+          "y": [
+            558,
+            545,
+            70,
+            58
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 2,
+        "name": "wall",
+        "name_ndx": 2978,
+        "hypernym": [
+          "wall",
+          "partition, divider",
+          "structure, construction",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "wall",
+        "attributes": [],
+        "depth_ordering_rank": 3,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_002_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            528,
+            442,
+            425,
+            527
+          ],
+          "y": [
+            0,
+            1,
+            649,
+            678
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 3,
+        "name": "wall",
+        "name_ndx": 2978,
+        "hypernym": [
+          "wall",
+          "partition, divider",
+          "structure, construction",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "wall",
+        "attributes": [],
+        "depth_ordering_rank": 4,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_003_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            212,
+            218,
+            75,
+            82,
+            209
+          ],
+          "y": [
+            463,
+            121,
+            84,
+            549,
+            491
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 4,
+        "name": "wall",
+        "name_ndx": 2978,
+        "hypernym": [
+          "wall",
+          "partition, divider",
+          "structure, construction",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "wall",
+        "attributes": [],
+        "depth_ordering_rank": 5,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_004_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            433,
+            434,
+            219,
+            210,
+            434
+          ],
+          "y": [
+            151,
+            85,
+            121,
+            493,
+            534
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 5,
+        "name": "bed",
+        "name_ndx": 165,
+        "hypernym": [
+          "bed",
+          "bedroom furniture",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "bed",
+        "attributes": "double size",
+        "depth_ordering_rank": 6,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": 34,
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_005_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            340,
+            319,
+            106,
+            128,
+            309,
+            316,
+            351,
+            361,
+            375,
+            388,
+            409,
+            430,
+            422,
+            382,
+            357
+          ],
+          "y": [
+            619,
+            612,
+            555,
+            482,
+            455,
+            387,
+            384,
+            372,
+            372,
+            364,
+            364,
+            369,
+            578,
+            596,
+            597
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 6,
+        "name": "table",
+        "name_ndx": 2684,
+        "hypernym": [
+          "table",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "night table",
+        "attributes": [],
+        "depth_ordering_rank": 7,
+        "occluded": "yes",
+        "crop": "1",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_006_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            203,
+            240,
+            290,
+            269,
+            199
+          ],
+          "y": [
+            430,
+            421,
+            431,
+            457,
+            469
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 7,
+        "name": "cushion",
+        "name_ndx": 689,
+        "hypernym": [
+          "cushion",
+          "padding, cushioning",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "cushion",
+        "attributes": [],
+        "depth_ordering_rank": 8,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_007_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            366,
+            376,
+            379,
+            396,
+            412,
+            410,
+            382
+          ],
+          "y": [
+            476,
+            446,
+            431,
+            440,
+            434,
+            481,
+            475
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 8,
+        "name": "lamp",
+        "name_ndx": 1395,
+        "hypernym": [
+          "lamp",
+          "source of illumination",
+          "device",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "table lamp",
+        "attributes": "off",
+        "depth_ordering_rank": 9,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_008_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            266,
+            294,
+            294,
+            282,
+            284,
+            290,
+            281,
+            282,
+            273,
+            279,
+            267,
+            275,
+            276,
+            260
+          ],
+          "y": [
+            370,
+            372,
+            404,
+            404,
+            413,
+            416,
+            427,
+            436,
+            434,
+            425,
+            418,
+            409,
+            403,
+            400
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 9,
+        "name": "painting, picture",
+        "name_ndx": 1735,
+        "hypernym": [
+          "painting, picture",
+          "graphic art",
+          "art, fine art",
+          "creation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "picture",
+        "attributes": "painting",
+        "depth_ordering_rank": 10,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_009_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            151,
+            184,
+            181,
+            152
+          ],
+          "y": [
+            266,
+            266,
+            319,
+            318
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 10,
+        "name": "painting, picture",
+        "name_ndx": 1735,
+        "hypernym": [
+          "painting, picture",
+          "graphic art",
+          "art, fine art",
+          "creation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "picture",
+        "attributes": [],
+        "depth_ordering_rank": 11,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_010_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            116,
+            118,
+            148,
+            146,
+            118
+          ],
+          "y": [
+            351,
+            297,
+            300,
+            352,
+            351
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 11,
+        "name": "chair",
+        "name_ndx": 471,
+        "hypernym": [
+          "chair",
+          "seat",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "chair",
+        "attributes": [],
+        "depth_ordering_rank": 12,
+        "occluded": "yes",
+        "crop": "1",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_011_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            122,
+            122,
+            118,
+            115,
+            116,
+            133,
+            145,
+            149,
+            149,
+            181,
+            181,
+            157,
+            131
+          ],
+          "y": [
+            488,
+            461,
+            437,
+            409,
+            401,
+            396,
+            400,
+            424,
+            454,
+            463,
+            470,
+            475,
+            472
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 12,
+        "name": "chair",
+        "name_ndx": 471,
+        "hypernym": [
+          "chair",
+          "seat",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "chair",
+        "attributes": "",
+        "depth_ordering_rank": 13,
+        "occluded": "no",
+        "crop": "1",
+        "parts": {
+          "hasparts": [
+            40,
+            41,
+            42,
+            43,
+            44
+          ],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_012_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            437,
+            436,
+            434,
+            431,
+            428,
+            431,
+            487,
+            493,
+            497,
+            516,
+            528,
+            528,
+            522,
+            490,
+            494,
+            488,
+            484,
+            446,
+            442,
+            446,
+            445
+          ],
+          "y": [
+            704,
+            669,
+            651,
+            636,
+            618,
+            593,
+            573,
+            473,
+            460,
+            455,
+            455,
+            728,
+            628,
+            625,
+            676,
+            676,
+            616,
+            613,
+            628,
+            657,
+            702
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 13,
+        "name": "floor, flooring",
+        "name_ndx": 976,
+        "hypernym": [
+          "floor, flooring",
+          "horizontal surface, level",
+          "surface",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "floor",
+        "attributes": [],
+        "depth_ordering_rank": 14,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_013_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            0,
+            3,
+            73,
+            87,
+            206,
+            430,
+            427,
+            527,
+            527
+          ],
+          "y": [
+            799,
+            545,
+            558,
+            546,
+            496,
+            534,
+            652,
+            679,
+            799
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 14,
+        "name": "painting, picture",
+        "name_ndx": 1735,
+        "hypernym": [
+          "painting, picture",
+          "graphic art",
+          "art, fine art",
+          "creation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "picture",
+        "attributes": "painting",
+        "depth_ordering_rank": 15,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_014_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            15,
+            40,
+            40,
+            15
+          ],
+          "y": [
+            272,
+            269,
+            303,
+            303
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 15,
+        "name": "painting, picture",
+        "name_ndx": 1735,
+        "hypernym": [
+          "painting, picture",
+          "graphic art",
+          "art, fine art",
+          "creation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "picture",
+        "attributes": "painting",
+        "depth_ordering_rank": 16,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_015_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            16,
+            39,
+            39,
+            18
+          ],
+          "y": [
+            312,
+            312,
+            340,
+            342
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 16,
+        "name": "painting, picture",
+        "name_ndx": 1735,
+        "hypernym": [
+          "painting, picture",
+          "graphic art",
+          "art, fine art",
+          "creation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "picture",
+        "attributes": "painting",
+        "depth_ordering_rank": 17,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_016_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            37,
+            39,
+            21,
+            19
+          ],
+          "y": [
+            375,
+            349,
+            349,
+            372
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 17,
+        "name": "table",
+        "name_ndx": 2684,
+        "hypernym": [
+          "table",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "table",
+        "attributes": [],
+        "depth_ordering_rank": 18,
+        "occluded": [],
+        "crop": "1",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_017_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            78,
+            67,
+            57,
+            27,
+            0,
+            3,
+            40,
+            57,
+            94
+          ],
+          "y": [
+            591,
+            530,
+            509,
+            494,
+            490,
+            703,
+            703,
+            682,
+            654
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 18,
+        "name": "armchair",
+        "name_ndx": 57,
+        "hypernym": [
+          "armchair",
+          "chair",
+          "seat",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "armchair",
+        "attributes": [],
+        "depth_ordering_rank": 19,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [
+            21,
+            22,
+            25,
+            30,
+            31,
+            32,
+            33
+          ],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_018_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            167,
+            170,
+            158,
+            148,
+            24,
+            24,
+            12,
+            10,
+            10,
+            25,
+            39,
+            36,
+            25,
+            18,
+            33,
+            96,
+            106,
+            106,
+            85,
+            99,
+            146,
+            173,
+            191,
+            234,
+            210,
+            216,
+            201,
+            197
+          ],
+          "y": [
+            706,
+            796,
+            797,
+            709,
+            700,
+            790,
+            787,
+            688,
+            666,
+            652,
+            636,
+            618,
+            615,
+            603,
+            594,
+            594,
+            579,
+            567,
+            564,
+            551,
+            554,
+            554,
+            524,
+            491,
+            607,
+            733,
+            733,
+            666
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 19,
+        "name": "curtain, drape, drapery, mantle, pall",
+        "name_ndx": 687,
+        "hypernym": [
+          "curtain, drape, drapery, mantle, pall",
+          "blind, screen",
+          "protective covering, protective cover, protection",
+          "covering",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "curtain",
+        "attributes": [],
+        "depth_ordering_rank": 20,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_019_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            99,
+            101,
+            90,
+            107,
+            107,
+            110,
+            107,
+            110,
+            106,
+            100,
+            91,
+            84,
+            72,
+            78,
+            91,
+            100,
+            104
+          ],
+          "y": [
+            528,
+            451,
+            401,
+            303,
+            212,
+            148,
+            87,
+            76,
+            78,
+            79,
+            87,
+            85,
+            84,
+            564,
+            561,
+            561,
+            552
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 20,
+        "name": "curtain, drape, drapery, mantle, pall",
+        "name_ndx": 687,
+        "hypernym": [
+          "curtain, drape, drapery, mantle, pall",
+          "blind, screen",
+          "protective covering, protective cover, protection",
+          "covering",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "curtain",
+        "attributes": [],
+        "depth_ordering_rank": 21,
+        "occluded": [],
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_020_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            376,
+            372,
+            385,
+            396,
+            418,
+            424,
+            440,
+            425,
+            412,
+            400,
+            407,
+            397,
+            399,
+            410,
+            422,
+            413,
+            399,
+            385,
+            381
+          ],
+          "y": [
+            30,
+            7,
+            3,
+            6,
+            6,
+            3,
+            3,
+            646,
+            643,
+            633,
+            621,
+            622,
+            596,
+            494,
+            419,
+            379,
+            304,
+            163,
+            64
+          ],
+          "click_date": []
+        },
+        "saved_date": "05-May-2009 14:42:24"
+      },
+      {
+        "id": 21,
+        "name": "back",
+        "name_ndx": 83,
+        "hypernym": [],
+        "raw_name": "back",
+        "attributes": [],
+        "depth_ordering_rank": 22,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 18,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_021_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            151,
+            167,
+            171,
+            191,
+            238,
+            240,
+            214,
+            210,
+            209,
+            172,
+            167
+          ],
+          "y": [
+            695,
+            610,
+            589,
+            522,
+            488,
+            490,
+            619,
+            629,
+            619,
+            656,
+            697
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 18:58:46"
+      },
+      {
+        "id": 22,
+        "name": "arm",
+        "name_ndx": 54,
+        "hypernym": [],
+        "raw_name": "arm",
+        "attributes": [],
+        "depth_ordering_rank": 23,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [
+            24,
+            29
+          ],
+          "ispartof": 18,
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_022_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            112,
+            117,
+            118,
+            136,
+            156,
+            168,
+            174,
+            176,
+            172,
+            137,
+            114,
+            104,
+            94,
+            93,
+            100,
+            106,
+            106,
+            104,
+            97
+          ],
+          "y": [
+            598,
+            581,
+            568,
+            567,
+            570,
+            573,
+            573,
+            559,
+            555,
+            553,
+            552,
+            552,
+            556,
+            562,
+            567,
+            567,
+            576,
+            589,
+            598
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 18:59:02"
+      },
+      {
+        "id": 23,
+        "name": "manchette",
+        "name_ndx": 1493,
+        "hypernym": [],
+        "raw_name": "manchette",
+        "attributes": [],
+        "depth_ordering_rank": 24,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 29,
+          "hasparts": [],
+          "part_level": 3
+        },
+        "instance_mask": "ADE_train_00001207/instance_023_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            122,
+            118,
+            117,
+            135,
+            147,
+            158,
+            165,
+            166,
+            156,
+            135
+          ],
+          "y": [
+            547,
+            555,
+            562,
+            566,
+            565,
+            565,
+            565,
+            557,
+            554,
+            552
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 18:59:47"
+      },
+      {
+        "id": 24,
+        "name": "arm support",
+        "name_ndx": 56,
+        "hypernym": [],
+        "raw_name": "arm support",
+        "attributes": [],
+        "depth_ordering_rank": 25,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 22,
+          "hasparts": [],
+          "part_level": 2
+        },
+        "instance_mask": "ADE_train_00001207/instance_024_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            114,
+            119,
+            117,
+            108,
+            107,
+            104,
+            97,
+            105
+          ],
+          "y": [
+            599,
+            570,
+            569,
+            568,
+            577,
+            588,
+            596,
+            598
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:00:05"
+      },
+      {
+        "id": 25,
+        "name": "arm",
+        "name_ndx": 54,
+        "hypernym": [],
+        "raw_name": "arm",
+        "attributes": [],
+        "depth_ordering_rank": 26,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [
+            27,
+            28
+          ],
+          "ispartof": 18,
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_025_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            25,
+            25,
+            42,
+            53,
+            106,
+            161,
+            166,
+            168,
+            156,
+            127,
+            127,
+            50,
+            34,
+            25,
+            21,
+            20,
+            23,
+            37,
+            37,
+            27,
+            12,
+            11
+          ],
+          "y": [
+            684,
+            674,
+            653,
+            614,
+            617,
+            614,
+            612,
+            593,
+            598,
+            601,
+            601,
+            595,
+            594,
+            598,
+            603,
+            606,
+            612,
+            614,
+            634,
+            652,
+            665,
+            685
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:00:37"
+      },
+      {
+        "id": 26,
+        "name": "manchette",
+        "name_ndx": 1493,
+        "hypernym": [],
+        "raw_name": "manchette",
+        "attributes": [],
+        "depth_ordering_rank": 27,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 27,
+          "hasparts": [],
+          "part_level": 3
+        },
+        "instance_mask": "ADE_train_00001207/instance_026_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            52,
+            52,
+            53,
+            112,
+            120,
+            122,
+            117,
+            54
+          ],
+          "y": [
+            607,
+            600,
+            596,
+            601,
+            601,
+            610,
+            616,
+            613
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:00:54"
+      },
+      {
+        "id": 27,
+        "name": "inside arm",
+        "name_ndx": 1329,
+        "hypernym": [],
+        "raw_name": "inside arm",
+        "attributes": [],
+        "depth_ordering_rank": 28,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": 26,
+          "ispartof": 25,
+          "part_level": 2
+        },
+        "instance_mask": "ADE_train_00001207/instance_027_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            165,
+            141,
+            118,
+            76,
+            47,
+            36,
+            28,
+            22,
+            19,
+            22,
+            30,
+            38,
+            56,
+            115,
+            161,
+            165
+          ],
+          "y": [
+            591,
+            598,
+            599,
+            596,
+            593,
+            593,
+            594,
+            599,
+            605,
+            612,
+            614,
+            614,
+            614,
+            615,
+            616,
+            611
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:01:10"
+      },
+      {
+        "id": 28,
+        "name": "arm support",
+        "name_ndx": 56,
+        "hypernym": [],
+        "raw_name": "arm support",
+        "attributes": [],
+        "depth_ordering_rank": 29,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 25,
+          "hasparts": [],
+          "part_level": 2
+        },
+        "instance_mask": "ADE_train_00001207/instance_028_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            55,
+            50,
+            42,
+            25,
+            22,
+            10,
+            9,
+            22,
+            35,
+            37,
+            38
+          ],
+          "y": [
+            618,
+            633,
+            655,
+            673,
+            684,
+            685,
+            664,
+            653,
+            636,
+            621,
+            614
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:01:35"
+      },
+      {
+        "id": 29,
+        "name": "inside arm",
+        "name_ndx": 1329,
+        "hypernym": [],
+        "raw_name": "inside arm",
+        "attributes": [],
+        "depth_ordering_rank": 30,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": 23,
+          "ispartof": 22,
+          "part_level": 2
+        },
+        "instance_mask": "ADE_train_00001207/instance_029_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            112,
+            102,
+            94,
+            91,
+            91,
+            97,
+            107,
+            169,
+            174,
+            177,
+            177,
+            163,
+            128
+          ],
+          "y": [
+            549,
+            551,
+            553,
+            559,
+            562,
+            566,
+            567,
+            573,
+            571,
+            559,
+            553,
+            553,
+            549
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:02:01"
+      },
+      {
+        "id": 30,
+        "name": "seat cushion",
+        "name_ndx": 2276,
+        "hypernym": [],
+        "raw_name": "seat cushion",
+        "attributes": [],
+        "depth_ordering_rank": 31,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 18,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_030_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            117,
+            151,
+            166,
+            211,
+            210,
+            172,
+            169,
+            151,
+            163,
+            137,
+            91,
+            82,
+            58,
+            51,
+            42,
+            32,
+            26,
+            23
+          ],
+          "y": [
+            693,
+            698,
+            696,
+            643,
+            619,
+            655,
+            692,
+            695,
+            619,
+            616,
+            616,
+            617,
+            624,
+            630,
+            654,
+            666,
+            673,
+            683
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:02:36"
+      },
+      {
+        "id": 31,
+        "name": "leg",
+        "name_ndx": 1433,
+        "hypernym": [],
+        "raw_name": "leg",
+        "attributes": [],
+        "depth_ordering_rank": 32,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 18,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_031_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            156,
+            151,
+            166,
+            169
+          ],
+          "y": [
+            797,
+            699,
+            697,
+            797
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:02:48"
+      },
+      {
+        "id": 32,
+        "name": "leg",
+        "name_ndx": 1433,
+        "hypernym": [],
+        "raw_name": "leg",
+        "attributes": [],
+        "depth_ordering_rank": 33,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 18,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_032_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            200,
+            199,
+            212,
+            214
+          ],
+          "y": [
+            735,
+            665,
+            648,
+            733
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:02:58"
+      },
+      {
+        "id": 33,
+        "name": "leg",
+        "name_ndx": 1433,
+        "hypernym": [],
+        "raw_name": "leg",
+        "attributes": [],
+        "depth_ordering_rank": 34,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 18,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_033_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            27,
+            12,
+            10,
+            22
+          ],
+          "y": [
+            789,
+            789,
+            685,
+            686
+          ],
+          "click_date": []
+        },
+        "saved_date": "24-May-2016 19:03:13"
+      },
+      {
+        "id": 34,
+        "name": "headboard",
+        "name_ndx": 1212,
+        "hypernym": [],
+        "raw_name": "headboard",
+        "attributes": [],
+        "depth_ordering_rank": 35,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 5,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_034_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            350,
+            329,
+            328,
+            313,
+            317,
+            336,
+            350,
+            363,
+            374,
+            385,
+            409,
+            410,
+            422,
+            415,
+            412,
+            398,
+            381,
+            377,
+            367,
+            359,
+            359
+          ],
+          "y": [
+            429,
+            429,
+            422,
+            428,
+            387,
+            386,
+            384,
+            370,
+            369,
+            361,
+            361,
+            364,
+            421,
+            445,
+            434,
+            440,
+            429,
+            438,
+            442,
+            440,
+            433
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:05:01"
+      },
+      {
+        "id": 35,
+        "name": "curtain, drape, drapery, mantle, pall",
+        "name_ndx": 687,
+        "hypernym": [
+          "curtain, drape, drapery, mantle, pall",
+          "blind, screen",
+          "protective covering, protective cover, protection",
+          "covering",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "curtain",
+        "attributes": [],
+        "depth_ordering_rank": 36,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_035_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            315,
+            302,
+            294,
+            291,
+            299,
+            309,
+            311,
+            322,
+            345,
+            351,
+            363,
+            372,
+            381,
+            402,
+            410,
+            389,
+            384,
+            353,
+            317
+          ],
+          "y": [
+            218,
+            343,
+            418,
+            427,
+            429,
+            420,
+            389,
+            386,
+            385,
+            382,
+            371,
+            369,
+            361,
+            364,
+            362,
+            208,
+            205,
+            207,
+            210
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:05:20"
+      },
+      {
+        "id": 36,
+        "name": "cushion",
+        "name_ndx": 689,
+        "hypernym": [
+          "cushion",
+          "padding, cushioning",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "cushion",
+        "attributes": [],
+        "depth_ordering_rank": 37,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_036_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            313,
+            316,
+            322,
+            326,
+            314,
+            298,
+            287,
+            275,
+            270,
+            277,
+            299
+          ],
+          "y": [
+            472,
+            457,
+            441,
+            425,
+            425,
+            431,
+            430,
+            444,
+            460,
+            467,
+            467
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:05:30"
+      },
+      {
+        "id": 37,
+        "name": "cushion",
+        "name_ndx": 689,
+        "hypernym": [
+          "cushion",
+          "padding, cushioning",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "cushion",
+        "attributes": [],
+        "depth_ordering_rank": 38,
+        "occluded": "yes",
+        "crop": "1",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_037_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            328,
+            346,
+            353,
+            361,
+            354,
+            329,
+            320,
+            315,
+            320
+          ],
+          "y": [
+            469,
+            449,
+            442,
+            435,
+            429,
+            427,
+            448,
+            460,
+            467
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:05:43"
+      },
+      {
+        "id": 38,
+        "name": "cushion",
+        "name_ndx": 689,
+        "hypernym": [
+          "cushion",
+          "padding, cushioning",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "cushion",
+        "attributes": [],
+        "depth_ordering_rank": 39,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_038_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            335,
+            346,
+            366,
+            369,
+            377,
+            360,
+            356,
+            344,
+            330
+          ],
+          "y": [
+            475,
+            477,
+            479,
+            468,
+            441,
+            444,
+            442,
+            453,
+            465
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:05:52"
+      },
+      {
+        "id": 39,
+        "name": "chair",
+        "name_ndx": 471,
+        "hypernym": [
+          "chair",
+          "seat",
+          "furniture, piece of furniture, article of furniture",
+          "furnishing",
+          "instrumentality, instrumentation",
+          "artifact, artefact",
+          "whole, unit",
+          "object, physical object",
+          "physical entity",
+          "entity"
+        ],
+        "raw_name": "chair",
+        "attributes": [],
+        "depth_ordering_rank": 40,
+        "occluded": "yes",
+        "crop": "1",
+        "parts": {
+          "hasparts": [],
+          "ispartof": [],
+          "part_level": 0
+        },
+        "instance_mask": "ADE_train_00001207/instance_039_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            31,
+            26,
+            31,
+            34,
+            33,
+            25,
+            16,
+            2,
+            2,
+            16
+          ],
+          "y": [
+            491,
+            467,
+            429,
+            420,
+            411,
+            405,
+            405,
+            403,
+            490,
+            491
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:06:12"
+      },
+      {
+        "id": 40,
+        "name": "back",
+        "name_ndx": 83,
+        "hypernym": [],
+        "raw_name": "back",
+        "attributes": [],
+        "depth_ordering_rank": 41,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 12,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_040_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            508,
+            487,
+            489,
+            494,
+            491,
+            494,
+            498,
+            528,
+            528,
+            520
+          ],
+          "y": [
+            578,
+            574,
+            537,
+            490,
+            476,
+            462,
+            453,
+            454,
+            579,
+            578
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:06:44"
+      },
+      {
+        "id": 41,
+        "name": "seat",
+        "name_ndx": 2272,
+        "hypernym": [],
+        "raw_name": "seat",
+        "attributes": [],
+        "depth_ordering_rank": 42,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 12,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_041_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            484,
+            433,
+            449,
+            529,
+            528,
+            508,
+            492
+          ],
+          "y": [
+            570,
+            593,
+            596,
+            612,
+            578,
+            577,
+            573
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:07:02"
+      },
+      {
+        "id": 42,
+        "name": "apron",
+        "name_ndx": 42,
+        "hypernym": [],
+        "raw_name": "apron",
+        "attributes": [],
+        "depth_ordering_rank": 43,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 12,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_042_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            445,
+            445,
+            528,
+            528
+          ],
+          "y": [
+            611,
+            596,
+            612,
+            627
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:07:13"
+      },
+      {
+        "id": 43,
+        "name": "leg",
+        "name_ndx": 1433,
+        "hypernym": [],
+        "raw_name": "leg",
+        "attributes": [],
+        "depth_ordering_rank": 44,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 12,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_043_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            436,
+            439,
+            437,
+            435,
+            428,
+            427,
+            429,
+            446,
+            445,
+            441,
+            445,
+            444,
+            444
+          ],
+          "y": [
+            707,
+            691,
+            674,
+            651,
+            629,
+            620,
+            595,
+            598,
+            614,
+            627,
+            653,
+            680,
+            705
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:07:29"
+      },
+      {
+        "id": 44,
+        "name": "leg",
+        "name_ndx": 1433,
+        "hypernym": [],
+        "raw_name": "leg",
+        "attributes": [],
+        "depth_ordering_rank": 45,
+        "occluded": "no",
+        "crop": "0",
+        "parts": {
+          "ispartof": 12,
+          "hasparts": [],
+          "part_level": 1
+        },
+        "instance_mask": "ADE_train_00001207/instance_044_ADE_train_00001207.png",
+        "polygon": {
+          "x": [
+            484,
+            485,
+            494,
+            494
+          ],
+          "y": [
+            678,
+            621,
+            622,
+            676
+          ],
+          "click_date": []
+        },
+        "saved_date": "31-May-2016 16:07:40"
+      }
+    ]
+  }
+}
