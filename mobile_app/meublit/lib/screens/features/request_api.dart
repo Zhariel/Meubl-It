@@ -32,7 +32,7 @@ class RequestAPI {
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/inference_pipeline'));
+            'https://640g1w60tg.execute-api.us-east-1.amazonaws.com/api_meubl_it/inference_pipeline'));
 
     request.body = json.encode({
       "encoded_img": base64PickedImage,
@@ -78,7 +78,7 @@ class RequestAPI {
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/valid_captcha'));
+            'https://640g1w60tg.execute-api.us-east-1.amazonaws.com/api_meubl_it/valid_captcha'));
 
     request.body = json.encode({
       "key_img_captcha": keyImgCaptcha,
@@ -106,7 +106,7 @@ class RequestAPI {
     var request = http.Request(
         'POST',
         Uri.parse(
-            'https://zpps398ndg.execute-api.us-east-1.amazonaws.com/api_meubl_it/get_captcha'));
+            'https://640g1w60tg.execute-api.us-east-1.amazonaws.com/api_meubl_it/get_captcha'));
 
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
